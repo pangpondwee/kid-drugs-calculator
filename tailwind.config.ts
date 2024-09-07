@@ -57,7 +57,12 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Sukhumvit Set", "var(--font-ibm)", "system-ui", "sans-serif"],
+        sans: [
+          "Sukhumvit Set",
+          "var(--font-sarabun)",
+          "system-ui",
+          "sans-serif",
+        ],
       },
     },
   },
