@@ -41,6 +41,7 @@ export const drugs: Drug[] = [
     displayName: "Amoxicillin 125mg/5ml syr",
     description: "6.6 - 13.3 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 25,
     originalDoseWithRange: {
       lower: 6.6,
       upper: 13.3,
@@ -54,6 +55,7 @@ export const drugs: Drug[] = [
     displayName: "Amoxicillin 250mg/5ml syr",
     description: "6.6 - 13.3 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 50,
     originalDoseWithRange: {
       lower: 6.6,
       upper: 13.3,
@@ -89,6 +91,7 @@ export const drugs: Drug[] = [
     displayName: "Amox/clav 228.5 mg/5ml syr BID",
     description: "8.3 - 15 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 45.7,
     originalDoseWithRange: {
       lower: 8.3,
       upper: 15,
@@ -101,6 +104,7 @@ export const drugs: Drug[] = [
     displayName: "Amox/clav 457 mg/5ml syr BID",
     description: "8.3 - 15 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 91.4,
     originalDoseWithRange: {
       lower: 8.3,
       upper: 15,
@@ -234,6 +238,7 @@ export const drugs: Drug[] = [
     remark: "max 2-3 g/day",
     meal: "หลังอาหาร",
     label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
+    divider: 25,
     originalDoseWithRange: {
       lower: 8.3,
       upper: 16.6,
@@ -244,6 +249,7 @@ export const drugs: Drug[] = [
     displayName: "Cephalexin 250mg/5ml syr",
     description: "8.3 - 16.6 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 50,
     originalDoseWithRange: {
       lower: 8.3,
       upper: 16.6,
@@ -276,6 +282,7 @@ export const drugs: Drug[] = [
     displayName: "Cloxacillin 125mg/5ml syr",
     description: "12.5 - 25 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 25,
     originalDoseWithRange: {
       lower: 12.5,
       upper: 25,
@@ -289,6 +296,7 @@ export const drugs: Drug[] = [
     displayName: "Dicloxacillin 62.5mg/5ml syr",
     description: "6.25 - 12.5 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 12.5,
     originalDoseWithRange: {
       lower: 6.25,
       upper: 12.5,
@@ -310,6 +318,7 @@ export const drugs: Drug[] = [
     displayName: "Domperidone 1mg/ml syr",
     description: "0.2 - 0.4 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 1,
     originalDoseWithRange: {
       lower: 0.2,
       upper: 0.4,
@@ -322,6 +331,7 @@ export const drugs: Drug[] = [
     displayName: "Guaifenesin 100mg/5ml syr ",
     description: "2.5 - 5 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 20,
     originalDoseWithRange: {
       lower: 2.5,
       upper: 5,
@@ -344,6 +354,7 @@ export const drugs: Drug[] = [
     displayName: "Ibuprofen 100mg/5ml syr",
     description: "7 - 10 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 20,
     originalDoseWithRange: {
       lower: 7,
       upper: 10,
@@ -370,6 +381,7 @@ export const drugs: Drug[] = [
     displayName: "Paracetamol 100mg/ml syr",
     description: "10 - 15 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 100,
     originalDoseWithRange: {
       lower: 10,
       upper: 15,
@@ -382,6 +394,7 @@ export const drugs: Drug[] = [
     displayName: "Paracetamol 120mg/5ml syr",
     description: "10 - 15 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 24,
     originalDoseWithRange: {
       lower: 10,
       upper: 15,
@@ -394,6 +407,7 @@ export const drugs: Drug[] = [
     displayName: "Paracetamol 160mg/5ml syr",
     description: "10 - 15 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 32,
     originalDoseWithRange: {
       lower: 10,
       upper: 15,
@@ -406,6 +420,7 @@ export const drugs: Drug[] = [
     displayName: "Paracetamol 250mg/5ml syr",
     description: "10 - 15 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 50,
     originalDoseWithRange: {
       lower: 10,
       upper: 15,
@@ -455,6 +470,7 @@ export const drugs: Drug[] = [
     displayName: "Terbutaline 1.5mg/5ml syr",
     description: "0.07 - 0.1 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 0.3,
     originalDoseWithRange: {
       lower: 0.07,
       upper: 0.1,
@@ -468,6 +484,7 @@ export const drugs: Drug[] = [
     displayName: "Trimethoprim/sulfa (bactrim) 40/200 mg/5ml syr",
     description: "3 - 6 mg/kg/dose",
     doseUnit: "mg/kg/dose",
+    divider: 8,
     originalDoseWithRange: {
       lower: 3,
       upper: 6,

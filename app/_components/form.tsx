@@ -90,14 +90,14 @@ export default function Form() {
       return;
     }
 
-    if (originalDoseWithRange) {
+    if (originalDoseWithRange && divider) {
       const calculatedDoseWithRange = {
         lower: calculateDose(originalDoseWithRange.lower, weight),
         upper: calculateDose(originalDoseWithRange.upper, weight),
       };
       const calculatedEatWithRange = {
-        lower: calculatedDoseWithRange.lower / 25,
-        upper: calculatedDoseWithRange.upper / 25,
+        lower: calculatedDoseWithRange.lower / divider,
+        upper: calculatedDoseWithRange.upper / divider,
       };
       const howToTake = {
         first: `ครั้งละ ${(calculatedEatWithRange.lower / 5).toFixed(1)} - ${(
@@ -126,7 +126,7 @@ export default function Form() {
       const howToTake = {
         first: `ครั้งละ ${(calculatedEat / 5).toFixed(
           1
-        )} ${meal} ช้อนชา (${calculatedEat.toFixed(1)} ml)`,
+        )} ช้อนชา (${calculatedEat.toFixed(1)} ml)`,
         second: `${label} ${meal}`,
       };
       setHistoryDrug([
