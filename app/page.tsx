@@ -11,6 +11,9 @@ export default function Page() {
         <Form />
         <History />
       </main>
+      <footer className="bg-white/60 px-4 py-0.5 text-sm">
+        © 2024 Chanatkarn-Chatkanok-Sasisorn. All rights reserved.
+      </footer>
     </div>
   );
 }
