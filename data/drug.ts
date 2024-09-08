@@ -14,6 +14,18 @@ export type Drug = {
     lower: number;
     upper: number;
   };
+  calculatedDoseWithRange?: {
+    lower: number;
+    upper: number;
+  };
+  calculatedEatWithRange?: {
+    lower: number;
+    upper: number;
+  };
+  howToTake?: {
+    first: string;
+    second?: string;
+  };
 };
 
 export const drugs: Drug[] = [
