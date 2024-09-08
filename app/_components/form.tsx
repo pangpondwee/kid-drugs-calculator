@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
 import { drugAtom, historyDrugAtom } from "@/store/atoms";
 import { useState } from "react";
+import { calculateDrug } from "./function";
 
 interface DrugDrawerProps {
   open: boolean;
@@ -74,67 +75,13 @@ export default function Form() {
     setCurrentDrug(null);
   }
 
-  function calculateDose(dose: number, weight: number): number {
-    return dose * weight;
-  }
-
   function handleCalculate() {
     if (!currentDrug || !weight) return;
 
-    const { type, originalDoseWithRange, dose, divider, label, meal } =
-      currentDrug;
-
-    if (type === "calculateByAge") {
-      setHistoryDrug([...historyDrug, currentDrug]);
+    const calculatedDrug = calculateDrug(currentDrug, weight);
+    if (calculatedDrug) {
+      setHistoryDrug([...historyDrug, calculatedDrug]);
       resetForm();
-      return;
-    }
-
-    if (originalDoseWithRange && divider) {
-      const calculatedDoseWithRange = {
-        lower: calculateDose(originalDoseWithRange.lower, weight),
-        upper: calculateDose(originalDoseWithRange.upper, weight),
-      };
-      const calculatedEatWithRange = {
-        lower: calculatedDoseWithRange.lower / divider,
-        upper: calculatedDoseWithRange.upper / divider,
-      };
-      const howToTake = {
-        first: `ครั้งละ ${(calculatedEatWithRange.lower / 5).toFixed(1)} - ${(
-          calculatedEatWithRange.upper / 5
-        ).toFixed(1)} ช้อนชา (${calculatedEatWithRange.lower.toFixed(
-          1
-        )} - ${calculatedEatWithRange.upper.toFixed(1)} ml)`,
-        second: `${label} ${meal}`,
-      };
-      setHistoryDrug([
-        ...historyDrug,
-        {
-          ...currentDrug,
-          calculatedDoseWithRange,
-          calculatedEatWithRange,
-          howToTake,
-        },
-      ]);
-      resetForm();
-      return;
-    }
-
-    if (dose && divider) {
-      const calculatedDose = calculateDose(dose, weight);
-      const calculatedEat = calculatedDose / divider;
-      const howToTake = {
-        first: `ครั้งละ ${(calculatedEat / 5).toFixed(
-          1
-        )} ช้อนชา (${calculatedEat.toFixed(1)} ml)`,
-        second: `${label} ${meal}`,
-      };
-      setHistoryDrug([
-        ...historyDrug,
-        { ...currentDrug, calculatedDose, calculatedEat, howToTake },
-      ]);
-      resetForm();
-      return;
     }
   }
 
