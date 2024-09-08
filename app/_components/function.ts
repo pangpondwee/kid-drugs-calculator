@@ -74,6 +74,7 @@ export function calculateDrug(
   drug: Drug,
   weight: number
 ): CalculatedDrug | null {
+  console.log("drug", drug);
   if (drug.type === "calculateByAge") {
     return drug;
   }
