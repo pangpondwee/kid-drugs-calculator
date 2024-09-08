@@ -14,7 +14,11 @@ export function History() {
     <div className="flex flex-col flex-1 gap-4">
       <div className="flex gap-4 items-baseline">
         <h2 className="text-xl font-bold w-full">ประวัติการคำนวณ</h2>
-        <Button variant="link" onClick={() => setHistoryDrug([])}>
+        <Button
+          variant="link"
+          className="text-sm"
+          onClick={() => setHistoryDrug([])}
+        >
           ล้างทั้งหมด
         </Button>
       </div>
@@ -40,7 +44,7 @@ export function History() {
               <Trash2Icon size={20} />
             </Button>
           </CardHeader>
-          <CardContent className="p-4 flex flex-col gap-5">
+          <CardContent className="flex flex-col gap-5">
             <div className="flex flex-col gap-1">
               <span className="text-sm font-bold text-slate-800">
                 ขนาดยาตั้งต้น

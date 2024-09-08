@@ -14,7 +14,7 @@ export function SearchInput() {
       <SearchIcon className="size-5 text-slate-400" />
       <input
         type="text"
-        className="border-0 p-0 rounded-none h-fit appearance-none text-md placeholder:text-md  placeholder:text-slate-300"
+        className="flex-1 border-0 p-0 rounded-none h-fit appearance-none text-md placeholder:text-md  placeholder:text-slate-300 outline-none"
         placeholder="ค้นหาด้วยชื่อ"
         defaultValue={search}
         onChange={(e) => setSearch(e.target.value.trim())}

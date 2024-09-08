@@ -14,7 +14,7 @@ export function DrugSelect({ onClick }: DrugSelectProps) {
 
   return (
     <div
-      className="flex py-2 items-center border-b-2 px-2 gap-2 cursor-pointer"
+      className="flex py-2 items-center border-b px-2 gap-2 cursor-pointer"
       onClick={onClick}
     >
       <p

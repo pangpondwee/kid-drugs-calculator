@@ -15,6 +15,7 @@ import { useAtom } from "jotai";
 import { drugAtom, historyDrugAtom } from "@/store/atoms";
 import { useState } from "react";
 import { calculateDrug } from "./function";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface DrugDrawerProps {
   open: boolean;
@@ -48,13 +49,14 @@ function CustomInput({ ...props }: CustomInputProps) {
   return (
     <div className="grid w-full max-w-sm items-center gap-2">
       <Label htmlFor="weight">น้ำหนัก</Label>
-      <div className="flex items-center border-b-2 px-2 gap-2">
+      <div className="flex items-baseline border-b px-2 gap-2">
         <input
           id="weight"
           type="number"
+          inputMode="decimal"
           value={props.value?.toString() || ""}
           placeholder={props.placeholder}
-          className="text-right w-full focus:text-right border-0 p-0 rounded-none appearance-none text-3xl font-bold text-indigo-600 placeholder:text-3xl placeholder:font-bold placeholder:text-slate-300"
+          className="text-right w-full focus:text-right border-0 p-0 rounded-none appearance-none text-3xl font-bold text-indigo-600 placeholder:text-3xl placeholder:font-bold placeholder:text-slate-300 outline-none"
           onChange={(e) => props.onChange(e.target.valueAsNumber)}
         />
         <Label>กิโลกรัม</Label>
@@ -88,23 +90,25 @@ export default function Form() {
   return (
     <>
       <DrugDrawer open={open} onOpenChange={setOpen} />
-      <div className="flex flex-col p-4 gap-6 bg-white/95 rounded-xl ">
-        <CustomInput
-          name="weight"
-          label="น้ำหนัก"
-          unit="กิโลกรัม"
-          value={weight}
-          placeholder="0.00"
-          onChange={setWeight}
-        />
-        <div className="grid w-full max-w-sm items-center gap-2">
-          <Label>ยาที่ต้องการใช้</Label>
-          <DrugSelect onClick={() => setOpen(true)} />
-        </div>
-        <Button onClick={handleCalculate} disabled={!currentDrug || !weight}>
-          คำนวณ
-        </Button>
-      </div>
+      <Card>
+        <CardContent>
+          <CustomInput
+            name="weight"
+            label="น้ำหนัก"
+            unit="กิโลกรัม"
+            value={weight}
+            placeholder="0.00"
+            onChange={setWeight}
+          />
+          <div className="grid w-full max-w-sm items-center gap-2">
+            <Label>ยาที่ต้องการใช้</Label>
+            <DrugSelect onClick={() => setOpen(true)} />
+          </div>
+          <Button onClick={handleCalculate} disabled={!currentDrug || !weight}>
+            คำนวณ
+          </Button>
+        </CardContent>
+      </Card>
     </>
   );
 }

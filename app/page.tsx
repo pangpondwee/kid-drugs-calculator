@@ -7,7 +7,7 @@ export default function Page() {
       <header className="bg-white/60 backdrop-blur-xl p-4 border-b-[0.5px] border-slate-300 flex w-full justify-center">
         <h1 className="text-lg font-bold">คำนวณขนาดยาน้ำเด็ก</h1>
       </header>
-      <main className="flex flex-col flex-1 p-4 gap-6 max-w-screen-xs mx-auto">
+      <main className="flex flex-col flex-1 p-4 gap-6 max-w-screen-sm mx-auto">
         <Form />
         <History />
       </main>
