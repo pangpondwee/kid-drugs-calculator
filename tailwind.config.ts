@@ -60,7 +60,6 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          "Sukhumvit Set",
           "var(--font-sarabun)",
           "system-ui",
           "sans-serif",
