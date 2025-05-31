@@ -12,7 +12,7 @@ export default function Page() {
         <History />
       </main>
       <footer className="bg-white/60 px-4 py-0.5 text-sm">
-        © 2025 Chanatkarn-Thitikarn-Amonwan-Pimchanok. All rights reserved.
+        Update date: 31/05/2025
       </footer>
     </div>
   );

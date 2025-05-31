@@ -4,7 +4,8 @@ import { Sarabun } from "next/font/google";
 import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
-  title: "โปรแกรมคำนวณคำนวณขนาดยาน้ำเด็ก",
+  title: "แอปพลิเคชันคำนวณขนาดยาน้ำในเด็ก",
+  description: "ระบุน้ำหนักในหน่วย กิโลกรัม พร้อมกับเลือกชนิด/ความแรงของยา เพื่อคำนวณขนาดยาน้ำในเด็กเฉพาะราย",
 };
 
 const sarabun = Sarabun({
