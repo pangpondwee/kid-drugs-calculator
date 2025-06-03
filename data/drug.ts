@@ -1,18 +1,18 @@
 export type Drug = {
   type: "calculateByAge" | "calculateByWeight";
   displayName: string;
-  description: string;
+  description: string; // จาก Column ขนาดยาตั้งต้น เช่น > 2 y: 10 mL with meal single dose or BID 3 Days
   doseUnit?: string;
-  remark?: string;
-  meal?: "หลังอาหาร" | "ก่อนอาหาร";
-  label?: string;
-  dose?: number;
-  divider?: number;
+  remark?: string; // จาก Column หมายเหตุ
+  meal?: "หลังอาหาร" | "ก่อนอาหาร"; // จาก Column มื้ออาหาร
+  label?: string; // จาก Column ฉลากรับประทาน
+  dose?: number; // จากตัวคูณของ Column ขนาดยา mg/dose แบบไม่มีช่วงบน/ช่วงล่าง
+  divider?: number; // จากตัวหารของ Column รับประทานครั้งละ ขนาดยา ml/dose
   calculatedDose?: number;
   calculatedEat?: number;
   originalDoseWithRange?: {
-    lower: number;
-    upper: number;
+    lower: number; // จาก Column ขนาดยา mg/dose ช่วงล่าง
+    upper: number; // จาก Column ขนาดยา mg/dose ช่วงบน
   };
   calculatedDoseWithRange?: {
     lower: number;
