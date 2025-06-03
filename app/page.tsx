@@ -11,8 +11,8 @@ export default function Page() {
         <Form />
         <History />
       </main>
-      <footer className="bg-white/60 px-4 py-0.5 text-sm">
-        Update date: 31/05/2025
+      <footer className="px-4 py-1 text-xs flex justify-center text-slate-600">
+        Version 1.0.0 (31/05/2025)
       </footer>
     </div>
   );
