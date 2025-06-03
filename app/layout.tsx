@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Sarabun } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: "แอปพลิเคชันคำนวณขนาดยาน้ำในเด็ก",
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="th" suppressHydrationWarning>
       <body className={`${sarabun.variable} font-sans antialiased `}>
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );
