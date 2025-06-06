@@ -1,5 +1,5 @@
 export type Drug = {
-  type: "calculateByAge" | "calculateByWeight";
+  type: "calculateByAge" | "calculateByWeight" | "twoStepCalculateByWeight";
   displayName: string;
   description: string; // จาก Column ขนาดยาตั้งต้น เช่น > 2 y: 10 mL with meal single dose or BID 3 Days
   doseUnit?: string;
@@ -26,6 +26,7 @@ export type Drug = {
     first: string;
     second?: string;
   };
+  secondaryData?: Drug;
 };
 
 export const drugs: Drug[] = [
@@ -493,4 +494,45 @@ export const drugs: Drug[] = [
     meal: "หลังอาหาร",
     label: "วันละ 2 ครั้ง เช้า เย็น",
   },
+  {
+    type: "calculateByWeight",
+    displayName: "Favipiravir 100 mg/ml extemp. for susp",
+    description: "วันแรก: 35 mg/kg/dose",
+    doseUnit: "mg/dose",
+    divider: 100,
+    originalDoseWithRange: {
+      lower: 35,
+      upper: 35,
+    },
+    remark: "รับประทานเป็นเวลา 5 วัน",
+    meal: "หลังอาหาร",
+    label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
+    secondaryData: {
+      type: "calculateByWeight",
+    displayName: "Favipiravir 100 mg/ml extemp. for susp (Day 2-5)",
+    description: "วันที่ 2-5: 15 mg/kg/dose",
+    doseUnit: "mg/dose",
+    divider: 100,
+    originalDoseWithRange: {
+      lower: 15,
+      upper: 15,
+    },
+    remark: "รับประทานเป็นเวลา 5 วัน",
+    meal: "หลังอาหาร",
+    label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
+    }
+  },
+  {
+    type: "calculateByWeight",
+    displayName: "Procaterol 25 mcg/5 ml syr",
+    description: "1.25 mcg/kg/dose",
+    doseUnit: "mcg/dose",
+    divider: 25,
+    originalDoseWithRange: {
+      lower: 1.25,
+      upper: 1.25,
+    },
+    meal: "หลังอาหาร",
+    label: "วันละ 2 ครั้ง เช้า เย็น",
+  }
 ];

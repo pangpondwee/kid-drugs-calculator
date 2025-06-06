@@ -12,9 +12,9 @@ import { SearchInput } from "./search-input";
 import { DrugList } from "./drug-list";
 import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
-import { drugAtom, historyDrugAtom } from "@/store/atoms";
+import { drugsAtom, drugsHistoryAtom } from "@/store/atoms";
 import { useState } from "react";
-import { calculateDrug } from "./function";
+import { calculateDrugs } from "../_lib/calculator";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface DrugDrawerProps {
@@ -69,20 +69,20 @@ export default function Form() {
   const [weight, setWeight] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
-  const [historyDrug, setHistoryDrug] = useAtom(historyDrugAtom);
-  const [currentDrug, setCurrentDrug] = useAtom(drugAtom);
+  const [drugsHistory, setDrugsHistory] = useAtom(drugsHistoryAtom);
+  const [drugs, setDrugs] = useAtom(drugsAtom);
 
   function resetForm() {
     setWeight(null);
-    setCurrentDrug(null);
+    setDrugs([]);
   }
 
   function handleCalculate() {
-    if (!currentDrug || !weight) return;
+    if (!drugs.length || !weight) return;
 
-    const calculatedDrug = calculateDrug(currentDrug, weight);
-    if (calculatedDrug) {
-      setHistoryDrug([...historyDrug, calculatedDrug]);
+    const calculatedDrugs = calculateDrugs(drugs, weight);
+    if (calculatedDrugs.length > 0) {
+      setDrugsHistory([...drugsHistory, ...calculatedDrugs]);
       resetForm();
     }
   }
@@ -104,7 +104,7 @@ export default function Form() {
             <Label>ยาที่ต้องการใช้</Label>
             <DrugSelect onClick={() => setOpen(true)} />
           </div>
-          <Button onClick={handleCalculate} disabled={!currentDrug || !weight}>
+          <Button onClick={handleCalculate} disabled={!drugs.length || !weight}>
             คำนวณ
           </Button>
         </CardContent>

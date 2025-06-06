@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { historyDrugAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { Trash2Icon } from "lucide-react";
-import { nanoid } from "nanoid";
 
 export function History() {
   const [historyDrug, setHistoryDrug] = useAtom(historyDrugAtom);
@@ -28,7 +27,7 @@ export function History() {
         </div>
       )}
       {historyDrug.map((drug, index) => (
-        <Card key={nanoid()}>
+        <Card key={`${drug.displayName}-${index}`}>
           <CardHeader className="flex justify-between flex-row items-center border-b p-4">
             <CardTitle className="text-md font-bold">
               {index + 1}. {drug.displayName}
@@ -49,7 +48,15 @@ export function History() {
               <span className="text-sm font-bold text-slate-800">
                 ขนาดยาตั้งต้น
               </span>
-              <span className="text-sm text-slate-600">{drug.description}</span>
+              <span className="text-sm text-slate-600">
+                  {drug.description}
+                  {drug.secondaryData?.description && (
+                    <>
+                      <br />
+                      {drug.secondaryData.description}
+                    </>
+                  )}
+              </span>
             </div>
             {drug.type === "calculateByWeight" && (
               <div className="flex flex-col gap-1">
@@ -62,10 +69,31 @@ export function History() {
                   </span>
                 ) : (
                   <span className="text-sm text-slate-600">
-                    {drug.calculatedDoseWithRange?.lower.toFixed(1)} -{" "}
-                    {drug.calculatedDoseWithRange?.upper.toFixed(1)}{" "}
+                    {drug.secondaryData ? "วันแรก: " : ""}
+                    {drug.calculatedDoseWithRange?.lower.toFixed(1)}
+                    {drug.calculatedDoseWithRange?.lower !== drug.calculatedDoseWithRange?.upper && (
+                      <> - {drug.calculatedDoseWithRange?.upper.toFixed(1)}</>
+                    )}{" "}
                     {drug.doseUnit}
                   </span>
+                )}
+                {drug.secondaryData?.type === "calculateByWeight" && (
+                  <>
+                    {drug.secondaryData.calculatedDose ? (
+                      <span className="text-sm text-slate-600">
+                        {drug.secondaryData.calculatedDose.toFixed(1)} {drug.secondaryData.doseUnit}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-slate-600">
+                      {drug.secondaryData ? "วันที่ 2-5: " : ""}
+                        {drug.secondaryData.calculatedDoseWithRange?.lower.toFixed(1)}
+                        {drug.secondaryData.calculatedDoseWithRange?.lower !== drug.secondaryData.calculatedDoseWithRange?.upper && (
+                          <> - {drug.secondaryData.calculatedDoseWithRange?.upper.toFixed(1)}</>
+                        )}{" "}
+                        {drug.secondaryData.doseUnit}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -79,7 +107,15 @@ export function History() {
                 ) : (
                   <div className="flex flex-col gap-1">
                     <span>{drug.howToTake?.first}</span>
-                    <span>{drug.howToTake?.second}</span>
+                    {!drug.secondaryData && (
+                      <span>{drug.howToTake?.second}</span>
+                    )}
+                    {drug.secondaryData?.type === "calculateByWeight" && drug.secondaryData.howToTake && (
+                      <>
+                        <span>{drug.secondaryData.howToTake.first}</span>
+                        <span>{drug.secondaryData.howToTake.second}</span>
+                      </>
+                    )}
                   </div>
                 )}
               </span>

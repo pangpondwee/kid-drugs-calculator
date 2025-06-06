@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ 
 import { Drug } from "@/data/drug";
 import { describe, expect, it } from "vitest";
-import { calculateDrug } from "./function";
+import { calculateDrug, calculateDrugs } from "./calculator";
 
 type CalculateByAgeTestCase = {
   weight: number;
@@ -23,6 +24,7 @@ type CalculateByWeightTestCase = {
       first: string;
       second?: string;
     };
+    secondaryData?: any; // For testing secondary data
   };
 };
 
@@ -36,6 +38,7 @@ type CalculateSingleDoseTestCase = {
       first: string;
       second?: string;
     };
+    secondaryData?: any; // For testing secondary data
   };
 };
 
@@ -809,16 +812,7 @@ const calculateByWeightTestCases: CalculateByWeightTestCase[] = [
     },
   },
 ];
-// calculatedDose: dose * weight;
-// calculatedEat: dose * weight / divider;
-// howToTake: {
-//   first: `ครั้งละ ${((dose * weight / divider / 5).toFixed(1))} - ${(
-//     (dose * weight / divider / 5).toFixed(1)
-//   )} ช้อนชา (${(dose * weight / divider).toFixed(1)} - ${(
-//     dose * weight / divider
-//   ).toFixed(1)} ml)`;
-//   second?: `${label} ${meal}`;
-// };
+
 const calculateSingleDoseTestCases: CalculateSingleDoseTestCase[] = [
   {
     weight: 10,
@@ -1132,6 +1126,149 @@ const calculateSingleDoseTestCases: CalculateSingleDoseTestCase[] = [
   },
 ];
 
+// Test cases for drugs with secondary data
+const calculateByAgeWithSecondaryDataTestCases: CalculateByAgeTestCase[] = [
+  {
+    weight: 10,
+    drug: {
+      type: "calculateByAge",
+      displayName: "Primary Drug with Secondary",
+      description: "Primary drug description",
+      remark: "คำนวณตามอายุ",
+      meal: "หลังอาหาร",
+      secondaryData: {
+        type: "calculateByWeight",
+        displayName: "Secondary Drug",
+        description: "10 - 15 mg/kg/dose",
+        doseUnit: "mg/kg/dose",
+        divider: 50,
+        originalDoseWithRange: {
+          lower: 10,
+          upper: 15,
+        },
+        meal: "หลังอาหาร",
+        label: "วันละ 2 ครั้ง เช้า เย็น",
+      },
+    },
+  },
+];
+
+const calculateByWeightWithSecondaryDataTestCases: CalculateByWeightTestCase[] = [
+  {
+    weight: 10,
+    drug: {
+      type: "calculateByWeight",
+      displayName: "Favipiravir 100 mg/ml extemp. for susp",
+      description: "วันแรก: 35 mg/kg/dose",
+      doseUnit: "mg/dose",
+      divider: 100,
+      originalDoseWithRange: {
+        lower: 35,
+        upper: 35,
+      },
+      remark: "รับประทานเป็นเวลา 5 วัน",
+      meal: "หลังอาหาร",
+      label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
+      secondaryData: {
+        type: "calculateByWeight",
+        displayName: "Favipiravir 100 mg/ml extemp. for susp (Day 2-5)",
+        description: "วันที่ 2-5: 15 mg/kg/dose",
+        doseUnit: "mg/dose",
+        divider: 100,
+        originalDoseWithRange: {
+          lower: 15,
+          upper: 15,
+        },
+        remark: "รับประทานเป็นเวลา 5 วัน",
+        meal: "หลังอาหาร",
+        label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
+      },
+    },
+    result: {
+      calculatedDoseWithRange: {
+        lower: 35 * 10,
+        upper: 35 * 10,
+      },
+      calculatedEatWithRange: {
+        lower: (35 * 10) / 100,
+        upper: (35 * 10) / 100,
+      },
+      howToTake: {
+        first: `ครั้งละ ${((35 * 10) / 100 / 5).toFixed(1)} ช้อนชา (${(
+          (35 * 10) /
+          100
+        ).toFixed(1)} ml)`,
+        second: "วันละ 2 ครั้ง ทุก 12 ช.ม. หลังอาหาร",
+      },
+      secondaryData: {
+        calculatedDoseWithRange: {
+          lower: 15 * 10,
+          upper: 15 * 10,
+        },
+        calculatedEatWithRange: {
+          lower: (15 * 10) / 100,
+          upper: (15 * 10) / 100,
+        },
+        howToTake: {
+          first: `ครั้งละ ${((15 * 10) / 100 / 5).toFixed(1)} ช้อนชา (${(
+            (15 * 10) /
+            100
+          ).toFixed(1)} ml)`,
+          second: "วันละ 2 ครั้ง ทุก 12 ช.ม. หลังอาหาร",
+        },
+      },
+    },
+  },
+];
+
+const calculateSingleDoseWithSecondaryDataTestCases: CalculateSingleDoseTestCase[] = [
+  {
+    weight: 10,
+    drug: {
+      type: "calculateByWeight",
+      displayName: "Primary Drug Single Dose",
+      description: "20 mg/kg/dose",
+      doseUnit: "mg/kg/dose",
+      meal: "หลังอาหาร",
+      label: "วันละ 2 ครั้ง เช้า เย็น",
+      dose: 20,
+      divider: 40,
+      secondaryData: {
+        type: "calculateByWeight",
+        displayName: "Secondary Drug Single Dose",
+        description: "10 mg/kg/dose",
+        doseUnit: "mg/kg/dose",
+        meal: "หลังอาหาร",
+        label: "วันละ 1 ครั้ง เช้า",
+        dose: 10,
+        divider: 40,
+      },
+    },
+    result: {
+      calculatedDose: 20 * 10,
+      calculatedEat: (20 * 10) / 40,
+      howToTake: {
+        first: `ครั้งละ ${((20 * 10) / 40 / 5).toFixed(1)} ช้อนชา (${(
+          (20 * 10) /
+          40
+        ).toFixed(1)} ml)`,
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
+      },
+      secondaryData: {
+        calculatedDose: 10 * 10,
+        calculatedEat: (10 * 10) / 40,
+        howToTake: {
+          first: `ครั้งละ ${((10 * 10) / 40 / 5).toFixed(1)} ช้อนชา (${(
+            (10 * 10) /
+            40
+          ).toFixed(1)} ml)`,
+          second: "วันละ 1 ครั้ง เช้า หลังอาหาร",
+        },
+      },
+    },
+  },
+];
+
 describe("calculateDrug", () => {
   it("should return null for unsupported drug", () => {
     const weight = 10;
@@ -1175,5 +1312,273 @@ describe("calculateDrug", () => {
         howToTake: testCase.result.howToTake,
       });
     });
+  });
+
+  // Tests for drugs with secondary data
+  calculateByAgeWithSecondaryDataTestCases.forEach((testCase, index) => {
+    it(`should handle calculateByAge drug with secondary data for case ${
+      index + 1
+    }`, () => {
+      const result = calculateDrug(testCase.drug, testCase.weight);
+      expect(result).toMatchObject({
+        type: testCase.drug.type,
+        displayName: testCase.drug.displayName,
+        description: testCase.drug.description,
+      });
+      
+      // Check that secondary data is calculated
+      expect(result?.secondaryData).toBeDefined();
+      if (testCase.drug.secondaryData && result?.secondaryData) {
+        expect(result.secondaryData).toHaveProperty('calculatedDoseWithRange');
+        expect(result.secondaryData).toHaveProperty('calculatedEatWithRange');
+        expect(result.secondaryData).toHaveProperty('howToTake');
+      }
+    });
+  });
+
+  calculateByWeightWithSecondaryDataTestCases.forEach((testCase, index) => {
+    it(`should calculate dose range with secondary data correctly for case ${
+      index + 1
+    }`, () => {
+      const result = calculateDrug(testCase.drug, testCase.weight);
+      expect(result).toMatchObject({
+        calculatedDoseWithRange: testCase.result.calculatedDoseWithRange,
+        calculatedEatWithRange: testCase.result.calculatedEatWithRange,
+        howToTake: testCase.result.howToTake,
+      });
+      
+      // Check secondary data calculation
+      expect(result?.secondaryData).toBeDefined();
+      if (testCase.result.secondaryData && result?.secondaryData) {
+        expect(result.secondaryData).toMatchObject(testCase.result.secondaryData);
+      }
+    });
+  });
+
+  calculateSingleDoseWithSecondaryDataTestCases.forEach((testCase, index) => {
+    it(`should calculate single dose with secondary data correctly for case ${
+      index + 1
+    }`, () => {
+      const result = calculateDrug(testCase.drug, testCase.weight);
+      expect(result).toMatchObject({
+        calculatedDose: testCase.result.calculatedDose,
+        calculatedEat: testCase.result.calculatedEat,
+        howToTake: testCase.result.howToTake,
+      });
+      
+      // Check secondary data calculation
+      expect(result?.secondaryData).toBeDefined();
+      if (testCase.result.secondaryData && result?.secondaryData) {
+        expect(result.secondaryData).toMatchObject(testCase.result.secondaryData);
+      }
+    });
+  });
+
+  it("should handle nested secondary data", () => {
+    const weight = 15;
+    const drugWithNestedSecondary: Drug = {
+      type: "calculateByAge",
+      displayName: "Parent Drug",
+      description: "Parent description",
+      meal: "หลังอาหาร",
+      secondaryData: {
+        type: "calculateByWeight",
+        displayName: "Child Drug",
+        description: "10 mg/kg/dose",
+        doseUnit: "mg/kg/dose",
+        dose: 10,
+        divider: 20,
+        meal: "หลังอาหาร",
+        label: "วันละ 2 ครั้ง",
+        secondaryData: {
+          type: "calculateByAge",
+          displayName: "Grandchild Drug",
+          description: "Grandchild description",
+          meal: "ก่อนอาหาร",
+        },
+      },
+    };
+
+    const result = calculateDrug(drugWithNestedSecondary, weight);
+    expect(result).toBeDefined();
+    expect(result?.secondaryData).toBeDefined();
+    expect(result?.secondaryData?.secondaryData).toBeDefined();
+    expect(result?.secondaryData?.calculatedDose).toBe(10 * weight);
+    expect(result?.secondaryData?.calculatedEat).toBe((10 * weight) / 20);
+  });
+});
+
+describe("calculateDrugs", () => {
+  it("should return empty array for empty input", () => {
+    const result = calculateDrugs([], 10);
+    expect(result).toEqual([]);
+  });
+
+  it("should filter out null results from unsupported drugs", () => {
+    const weight = 10;
+    const drugs = [
+      {
+        type: "calculateByWeight",
+        displayName: "Unsupported Drug",
+        description: "This is an unsupported drug",
+        remark: "This is an unsupported drug",
+      } as Drug,
+      calculateByAgeTestCases[0].drug,
+    ];
+
+    const result = calculateDrugs(drugs, weight);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(calculateByAgeTestCases[0].drug);
+  });
+
+  it("should calculate multiple drugs correctly", () => {
+    const weight = 10;
+    const drugs = [
+      calculateByAgeTestCases[0].drug,
+      calculateByWeightTestCases[0].drug,
+      calculateSingleDoseTestCases[0].drug,
+    ];
+
+    const result = calculateDrugs(drugs, weight);
+    expect(result).toHaveLength(3);
+
+    expect(result[0]).toEqual(calculateByAgeTestCases[0].drug);
+    expect(result[1]).toMatchObject({
+      calculatedDoseWithRange: calculateByWeightTestCases[0].result.calculatedDoseWithRange,
+      calculatedEatWithRange: calculateByWeightTestCases[0].result.calculatedEatWithRange,
+      howToTake: calculateByWeightTestCases[0].result.howToTake,
+    });
+    expect(result[2]).toMatchObject({
+      calculatedDose: calculateSingleDoseTestCases[0].result.calculatedDose,
+      calculatedEat: calculateSingleDoseTestCases[0].result.calculatedEat,
+      howToTake: calculateSingleDoseTestCases[0].result.howToTake,
+    });
+  });
+
+  it("should handle mixed drug types correctly", () => {
+    const weight = 15;
+    const drugs = [
+      calculateByAgeTestCases[1].drug, 
+      calculateByWeightTestCases[1].drug,
+      calculateSingleDoseTestCases[1].drug, 
+      {
+        type: "calculateByWeight",
+        displayName: "Invalid Drug",
+        description: "Missing required properties",
+      } as Drug,
+    ];
+
+    const result = calculateDrugs(drugs, weight);
+    expect(result).toHaveLength(3); // Only valid drugs should be included
+
+    expect(result[0]).toEqual(calculateByAgeTestCases[1].drug);
+
+    const expectedDoseRange = {
+      lower: calculateByWeightTestCases[1].drug.originalDoseWithRange!.lower * weight,
+      upper: calculateByWeightTestCases[1].drug.originalDoseWithRange!.upper * weight,
+    };
+    const expectedEatRange = {
+      lower: expectedDoseRange.lower / calculateByWeightTestCases[1].drug.divider!,
+      upper: expectedDoseRange.upper / calculateByWeightTestCases[1].drug.divider!,
+    };
+
+    expect(result[1]).toMatchObject({
+      calculatedDoseWithRange: expectedDoseRange,
+      calculatedEatWithRange: expectedEatRange,
+    });
+
+    const expectedDose = calculateSingleDoseTestCases[1].drug.dose! * weight;
+    const expectedEat = expectedDose / calculateSingleDoseTestCases[1].drug.divider!;
+
+    expect(result[2]).toMatchObject({
+      calculatedDose: expectedDose,
+      calculatedEat: expectedEat,
+    });
+  });
+
+  it("should preserve all drug properties when calculating", () => {
+    const weight = 12;
+    const drug = calculateByWeightTestCases[2].drug; // Pick a drug with many properties
+    const drugs = [drug];
+
+    const result = calculateDrugs(drugs, weight);
+    expect(result).toHaveLength(1);
+
+    const calculatedDrug = result[0];
+    
+    expect(calculatedDrug.displayName).toBe(drug.displayName);
+    expect(calculatedDrug.description).toBe(drug.description);
+    expect(calculatedDrug.meal).toBe(drug.meal);
+    expect(calculatedDrug.label).toBe(drug.label);
+    expect(calculatedDrug.type).toBe(drug.type);
+    
+    expect(calculatedDrug).toHaveProperty('calculatedDoseWithRange');
+    expect(calculatedDrug).toHaveProperty('calculatedEatWithRange');
+    expect(calculatedDrug).toHaveProperty('howToTake');
+  });
+
+  it("should calculate drugs with secondary data correctly", () => {
+    const weight = 10;
+    const drugs = [
+      calculateByAgeWithSecondaryDataTestCases[0].drug,
+      calculateByWeightWithSecondaryDataTestCases[0].drug,
+      calculateSingleDoseWithSecondaryDataTestCases[0].drug,
+    ];
+
+    const result = calculateDrugs(drugs, weight);
+    expect(result).toHaveLength(3);
+
+    // Check calculateByAge with secondary data
+    expect(result[0]).toMatchObject({
+      type: "calculateByAge",
+      displayName: "Primary Drug with Secondary",
+    });
+    expect(result[0].secondaryData).toBeDefined();
+    expect(result[0].secondaryData).toHaveProperty('calculatedDoseWithRange');
+
+    // Check calculateByWeight with secondary data
+    expect(result[1]).toMatchObject({
+      calculatedDoseWithRange: calculateByWeightWithSecondaryDataTestCases[0].result.calculatedDoseWithRange,
+      calculatedEatWithRange: calculateByWeightWithSecondaryDataTestCases[0].result.calculatedEatWithRange,
+    });
+    expect(result[1].secondaryData).toBeDefined();
+    expect(result[1].secondaryData).toMatchObject(
+      calculateByWeightWithSecondaryDataTestCases[0].result.secondaryData
+    );
+
+    // Check single dose with secondary data
+    expect(result[2]).toMatchObject({
+      calculatedDose: calculateSingleDoseWithSecondaryDataTestCases[0].result.calculatedDose,
+      calculatedEat: calculateSingleDoseWithSecondaryDataTestCases[0].result.calculatedEat,
+    });
+    expect(result[2].secondaryData).toBeDefined();
+    expect(result[2].secondaryData).toMatchObject(
+      calculateSingleDoseWithSecondaryDataTestCases[0].result.secondaryData
+    );
+  });
+
+  it("should handle mixed drugs with and without secondary data", () => {
+    const weight = 8;
+    const drugs = [
+      calculateByAgeTestCases[0].drug, // No secondary data
+      calculateByWeightWithSecondaryDataTestCases[0].drug, // With secondary data
+      calculateSingleDoseTestCases[0].drug, // No secondary data
+    ];
+
+    const result = calculateDrugs(drugs, weight);
+    expect(result).toHaveLength(3);
+
+    // First drug should not have secondary data
+    expect(result[0]).toEqual(calculateByAgeTestCases[0].drug);
+    expect(result[0].secondaryData).toBeUndefined();
+
+    // Second drug should have calculated secondary data
+    expect(result[1]).toHaveProperty('calculatedDoseWithRange');
+    expect(result[1].secondaryData).toBeDefined();
+    expect(result[1].secondaryData).toHaveProperty('calculatedDoseWithRange');
+
+    // Third drug should not have secondary data
+    expect(result[2]).toHaveProperty('calculatedDose');
+    expect(result[2].secondaryData).toBeUndefined();
   });
 });

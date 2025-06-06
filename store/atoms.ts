@@ -1,6 +1,25 @@
 import { Drug } from "@/data/drug";
 import { atom } from "jotai";
 
-export const drugAtom = atom<Drug | null>(null);
+export type CalculatedDrug = Drug & {
+  calculatedDoseWithRange?: {
+    lower: number;
+    upper: number;
+  };
+  calculatedEatWithRange?: {
+    lower: number;
+    upper: number;
+  };
+  howToTake?: {
+    first: string;
+    second?: string;
+  };
+  secondaryData?: CalculatedDrug;
+};
 
-export const historyDrugAtom = atom<Drug[]>([]);
+export const drugsAtom = atom<Drug[]>([]);
+
+export const drugsHistoryAtom = atom<CalculatedDrug[]>([]);
+
+// Alias for backward compatibility
+export const historyDrugAtom = drugsHistoryAtom;
