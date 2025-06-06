@@ -24,7 +24,7 @@ interface DrugDrawerProps {
 }
 
 function DrugDrawer({ open, onOpenChange }: DrugDrawerProps) {
-  const [drugs, setDrugs] = useAtom(drugsAtom);
+  const [, setDrugs] = useAtom(drugsAtom);
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
