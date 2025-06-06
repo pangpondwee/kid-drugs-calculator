@@ -12,7 +12,7 @@ export default function Page() {
         <History />
       </main>
       <footer className="px-4 py-1 text-xs flex justify-center text-slate-600">
-        Version 1.1.0 (07/05/2025)
+        Version 1.1.0 (07/06/2025)
       </footer>
     </div>
   );

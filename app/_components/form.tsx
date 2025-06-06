@@ -2,6 +2,7 @@
 
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
@@ -23,11 +24,19 @@ interface DrugDrawerProps {
 }
 
 function DrugDrawer({ open, onOpenChange }: DrugDrawerProps) {
+  const [drugs, setDrugs] = useAtom(drugsAtom);
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="w-full bg-white">
-        <DrawerHeader className="pt-4 pb-3 w-full flex justify-center border-b">
+        <DrawerHeader className="pt-4 pb-3 w-full items-center flex justify-between border-b">
+          <DrawerClose onClick={() => setDrugs([])}>
+            <span className="text-md text-indigo-800 cursor-pointer">ยกเลิก</span>
+          </DrawerClose>
           <DrawerTitle>เลือกยาที่ต้องการใช้</DrawerTitle>
+          <DrawerClose asChild>
+            <span className="text-md text-indigo-800 font-bold cursor-pointer">ตกลง</span>
+          </DrawerClose>
         </DrawerHeader>
         <SearchInput />
         <DrugList />
