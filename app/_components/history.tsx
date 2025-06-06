@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatNumber } from "@/lib/format";
 import { historyDrugAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { Trash2Icon } from "lucide-react";
@@ -65,14 +66,14 @@ export function History() {
                 </span>
                 {drug.calculatedDose ? (
                   <span className="text-sm text-slate-600">
-                    {drug.calculatedDose.toFixed(1)} {drug.doseUnit}
+                    {formatNumber(drug.calculatedDose)} {drug.doseUnit}
                   </span>
                 ) : (
                   <span className="text-sm text-slate-600">
                     {drug.secondaryData ? "วันแรก: " : ""}
-                    {drug.calculatedDoseWithRange?.lower.toFixed(1)}
+                    {formatNumber(drug.calculatedDoseWithRange?.lower ?? 0)}
                     {drug.calculatedDoseWithRange?.lower !== drug.calculatedDoseWithRange?.upper && (
-                      <> - {drug.calculatedDoseWithRange?.upper.toFixed(1)}</>
+                      <> - {formatNumber(drug.calculatedDoseWithRange?.upper ?? 0)}</>
                     )}{" "}
                     {drug.doseUnit}
                   </span>
@@ -81,14 +82,14 @@ export function History() {
                   <>
                     {drug.secondaryData.calculatedDose ? (
                       <span className="text-sm text-slate-600">
-                        {drug.secondaryData.calculatedDose.toFixed(1)} {drug.secondaryData.doseUnit}
+                        {formatNumber(drug.secondaryData.calculatedDose ?? 0)} {drug.secondaryData.doseUnit}
                       </span>
                     ) : (
                       <span className="text-sm text-slate-600">
                       {drug.secondaryData ? "วันที่ 2-5: " : ""}
-                        {drug.secondaryData.calculatedDoseWithRange?.lower.toFixed(1)}
+                        {formatNumber(drug.secondaryData.calculatedDoseWithRange?.lower ?? 0)}
                         {drug.secondaryData.calculatedDoseWithRange?.lower !== drug.secondaryData.calculatedDoseWithRange?.upper && (
-                          <> - {drug.secondaryData.calculatedDoseWithRange?.upper.toFixed(1)}</>
+                          <> - {formatNumber(drug.secondaryData.calculatedDoseWithRange?.upper ?? 0)}</>
                         )}{" "}
                         {drug.secondaryData.doseUnit}
                       </span>
