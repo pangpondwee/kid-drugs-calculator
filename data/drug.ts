@@ -1,5 +1,5 @@
 export type Drug = {
-  type: "calculateByAge" | "calculateByWeight" | "twoStepCalculateByWeight";
+  type: "calculateByAge" | "calculateByWeight";
   displayName: string;
   description: string; // จาก Column ขนาดยาตั้งต้น เช่น > 2 y: 10 mL with meal single dose or BID 3 Days
   doseUnit?: string;
@@ -198,7 +198,7 @@ export const drugs: Drug[] = [
   {
     type: "calculateByAge",
     displayName: "Carbocisteine 250mg/5ml syr",
-    description: "1-5 y: 5  mL OD - BID, >5 y: 5 mL TID",
+    description: "1-5 y: 5 mL OD - BID, >5 y: 5 mL TID",
     remark: "คำนวณตามอายุ",
     meal: "หลังอาหาร",
   },
@@ -211,7 +211,7 @@ export const drugs: Drug[] = [
   },
   {
     type: "calculateByWeight",
-    displayName: "Cefdinir 125mg/5ml sy",
+    displayName: "Cefdinir 125mg/5ml syr",
     description: "7 mg/kg/dose",
     doseUnit: "mg/dose",
     remark: "max 600 mg/day",
@@ -329,7 +329,7 @@ export const drugs: Drug[] = [
   },
   {
     type: "calculateByWeight",
-    displayName: "Guaifenesin 100mg/5ml syr ",
+    displayName: "Guaifenesin 100mg/5ml syr",
     description: "2.5 - 5 mg/kg/dose",
     doseUnit: "mg/dose",
     divider: 20,
@@ -495,6 +495,41 @@ export const drugs: Drug[] = [
     label: "วันละ 2 ครั้ง เช้า เย็น",
   },
   {
+    type: "calculateByAge",
+    displayName: "Brompheniramine/phenylephrine 4/10 mg/5ml syr",
+    description: "2-6 y: 1.25-2.5 mL PRN QID, 6-12 y: 2.5-5 mL PRN QID",
+    remark: "คำนวณตามอายุ",
+    meal: "หลังอาหาร",
+  },
+  {
+    type: "calculateByWeight",
+    displayName: "Dextromethorphan 15 mg/5ml syr",
+    description: "0.25-0.5 mg/kg/dose",
+    doseUnit: "mg/dose",
+    divider: 3,
+    originalDoseWithRange: {
+      lower: 0.25,
+      upper: 0.5,
+    },
+    remark: "ไม่ควรใช้ในเด็กที่อายุต่ำกว่า 4 ปี, max 120 mg/day",
+    meal: "หลังอาหาร",
+    label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
+  },
+  {
+    type: "calculateByWeight",
+    displayName: "Erythromycin 125 mg/5 ml susp",
+    description: "7.5 - 12.5 mg/kg/dose",
+    doseUnit: "mg/dose",
+    divider: 25,
+    originalDoseWithRange: {
+      lower: 7.5,
+      upper: 12.5,
+    },
+    remark: "max 4 g/day",
+    meal: "ก่อนอาหาร",
+    label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
+  },
+  {
     type: "calculateByWeight",
     displayName: "Favipiravir 100 mg/ml extemp. for susp",
     description: "วันแรก: 35 mg/kg/dose",
@@ -509,18 +544,18 @@ export const drugs: Drug[] = [
     label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
     secondaryData: {
       type: "calculateByWeight",
-    displayName: "Favipiravir 100 mg/ml extemp. for susp (Day 2-5)",
-    description: "วันที่ 2-5: 15 mg/kg/dose",
-    doseUnit: "mg/dose",
-    divider: 100,
-    originalDoseWithRange: {
-      lower: 15,
-      upper: 15,
+      displayName: "Favipiravir 100 mg/ml extemp. for susp (Day 2-5)",
+      description: "วันที่ 2-5: 15 mg/kg/dose",
+      doseUnit: "mg/dose",
+      divider: 100,
+      originalDoseWithRange: {
+        lower: 15,
+        upper: 15,
+      },
+      remark: "รับประทานเป็นเวลา 5 วัน",
+      meal: "หลังอาหาร",
+      label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
     },
-    remark: "รับประทานเป็นเวลา 5 วัน",
-    meal: "หลังอาหาร",
-    label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
-    }
   },
   {
     type: "calculateByWeight",
@@ -531,5 +566,50 @@ export const drugs: Drug[] = [
     dose: 1.25,
     meal: "หลังอาหาร",
     label: "วันละ 2 ครั้ง เช้า เย็น",
-  }
+  },
+  {
+    type: "calculateByAge",
+    displayName: "Lactulose 66.7 g/100 ml syr",
+    description: "<1 y: 5 mL/dose, 1-6 y: 5-10 mL/dose, 7-14 y: 10-15 mL/dose",
+    remark: "คำนวณตามอายุ",
+    meal: "หลังอาหาร",
+    label: "วันละ 1 ครั้ง เช้า หรือ ก่อนนอน",
+  },
+  {
+    type: "calculateByAge",
+    displayName: "Milk of Magnesia 400 mg/5ml susp",
+    description: "<2 y: 0.5 mL/kg/dose, 2-5 y: 5-15 mL/dose, 6-12 y 15-30 mL/dose",
+    remark: "คำนวณตามอายุ",
+    meal: "หลังอาหาร",
+    label: "วันละ 1 ครั้ง เช้า หรือ ก่อนนอน",
+  },
+  {
+    type: "calculateByAge",
+    displayName: "Nystatin 100,000 unit/ml susp",
+    description: "Premature: 1 mL QID, Infants: 2 mL QID",
+    remark: "คำนวณตามอายุ",
+    meal: "หลังอาหาร",
+  },
+    {
+    type: "calculateByAge",
+    displayName: "Oseltamivir 10mg/ml extemp. for susp",
+    description: "<1 y: 3 mg/kg/dose, 1-12 y: <15 kg: 30 mg/dose, 15-23 kg: 45 mg/dose, 23-40 kg: 60 mg/dose, >40 kg: 75 mg/dose",
+    remark: "รับประทานเป็นเวลา 5 วัน, คำนวณตามอายุ",
+    meal: "หลังอาหาร",
+    label: "วันละ 2 ครั้ง เช้า เย็น",
+  },
+  {
+    type: "calculateByWeight",
+    displayName: "Penicillin V 125 mg/5 ml susp",
+    description: "6.25 - 12.5 mg/kg/dose",
+    doseUnit: "mg/dose",
+    divider: 25,
+    originalDoseWithRange: {
+      lower: 6.25,
+      upper: 12.5,
+    },
+    meal: "ก่อนอาหาร",
+    label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
+  },
+  
 ];

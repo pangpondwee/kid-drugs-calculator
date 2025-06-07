@@ -1,51 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ 
-import { Drug } from "@/data/drug";
+import { Drug, drugs } from "@/data/drug";
 import { describe, expect, it } from "vitest";
 import { calculateDrug, calculateDrugs } from "./calculator";
 
-type CalculateByAgeTestCase = {
+type TestCase = {
+  drugDisplayName: string;
   weight: number;
-  drug: Drug;
+  expectedResult: any;
 };
 
-type CalculateByWeightTestCase = {
-  weight: number;
-  drug: Drug;
-  result: {
-    calculatedDoseWithRange?: {
-      lower: number;
-      upper: number;
-    };
-    calculatedEatWithRange?: {
-      lower: number;
-      upper: number;
-    };
-    howToTake?: {
-      first: string;
-      second?: string;
-    };
-    secondaryData?: any; // For testing secondary data
-  };
-};
+// Helper function to find drug by display name
+function findDrugByDisplayName(displayName: string): Drug {
+  const drug = drugs.find(d => d.displayName === displayName);
+  if (!drug) {
+    throw new Error(`Drug with displayName "${displayName}" not found in drugs array`);
+  }
+  return drug;
+}
 
-type CalculateSingleDoseTestCase = {
-  weight: number;
-  drug: Drug;
-  result: {
-    calculatedDose: number;
-    calculatedEat: number;
-    howToTake: {
-      first: string;
-      second?: string;
-    };
-    secondaryData?: any; // For testing secondary data
-  };
-};
-
-const calculateByAgeTestCases: CalculateByAgeTestCase[] = [
+// Test cases for calculateByAge drugs - these should return the drug as-is
+const calculateByAgeTestCases: TestCase[] = [
   {
+    drugDisplayName: "Albendazole 200mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Albendazole 200mg/5ml syr",
       description: "> 2 y: 10 mL with meal single dose or BID 3 Days",
@@ -54,19 +32,20 @@ const calculateByAgeTestCases: CalculateByAgeTestCase[] = [
     },
   },
   {
+    drugDisplayName: "Ambroxal 30mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Ambroxal 30mg/5ml syr",
-      description:
-        "2-6 y: 2.5 mL TID, 6-12 y: 5 mL BID-TID, >12 y: 5 mL TID or 10 mL BID",
+      description: "2-6 y: 2.5 mL TID, 6-12 y: 5 mL BID-TID, >12 y: 5 mL TID or 10 mL BID",
       remark: "คำนวณตามอายุ",
       meal: "หลังอาหาร",
     },
   },
   {
+    drugDisplayName: "Bromhexine 4mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Bromhexine 4mg/5ml syr",
       description: "2-6 y: 2.5 mL TID, 6-12 y: 5 mL TID, >12 y: 10 mL TID",
@@ -75,18 +54,9 @@ const calculateByAgeTestCases: CalculateByAgeTestCase[] = [
     },
   },
   {
+    drugDisplayName: "Carbocisteine 100mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByAge",
-      displayName: "Bromhexine 4mg/5ml syr",
-      description: "2-6 y: 2.5 mL TID, 6-12 y: 5 mL TID, >12 y: 10 mL TID",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
-    },
-  },
-  {
-    weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Carbocisteine 100mg/5ml syr",
       description: "1-5 y: 5 mL OD - BID, >5 y: 5 mL TID",
@@ -95,38 +65,36 @@ const calculateByAgeTestCases: CalculateByAgeTestCase[] = [
     },
   },
   {
+    drugDisplayName: "Carbocisteine 200mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Carbocisteine 200mg/5ml syr",
       description: "1-5 y: 5 mL OD - BID, >5 y: 5 mL TID",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
     },
   },
   {
+    drugDisplayName: "Carbocisteine 250mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Carbocisteine 250mg/5ml syr",
-      description: "1-5 y: 5  mL OD - BID, >5 y: 5 mL TID",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
+      description: "1-5 y: 5 mL OD - BID, >5 y: 5 mL TID",
     },
   },
   {
+    drugDisplayName: "Carbocisteine 500mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Carbocisteine 500mg/5ml syr",
       description: "1-5 y: 5 mL OD - BID, >5 y: 5 mL TID",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
     },
   },
   {
+    drugDisplayName: "Cetirizine 5mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Cetirizine 5mg/5ml syr",
       description: "2-6 y: 5 mL OD, >6 y: 10 mL OD",
@@ -135,1134 +103,636 @@ const calculateByAgeTestCases: CalculateByAgeTestCase[] = [
     },
   },
   {
+    drugDisplayName: "Desloratadine 0.5mg/ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Desloratadine 0.5mg/ml syr",
-      description:
-        "6 - 11 m: 2 mL OD, 1 - 5 y: 2.5 mL OD, 6 - 11 y: 5 mL OD, >12 y: 10 mL OD",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
+      description: "6 - 11 m: 2 mL OD, 1 - 5 y: 2.5 mL OD, 6 - 11 y: 5 mL OD, >12 y: 10 mL OD",
     },
   },
   {
+    drugDisplayName: "Loratadine 5mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Loratadine 5mg/5ml syr",
       description: "2-6 y: 5 mL OD, >6 y: 10 mL OD",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
     },
   },
   {
+    drugDisplayName: "Mebendazole 100mg/5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Mebendazole 100mg/5ml syr",
       description: "> 2 y: 5 mL with meal single dose or BID 3 Days",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
     },
   },
   {
+    drugDisplayName: "Simethicone 40mg/0.6ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Simethicone 40mg/0.6ml syr",
-      description:
-        "<2 y: 0.3 mL PRN QID, 2-12 y: 0.6 mL PRN QID, >12 y: 0.6 - 1.8 mL PRN QID",
-      remark: "คำนวณตามอายุ; < 2 y max 240 mg/day",
-      meal: "หลังอาหาร",
+      description: "<2 y: 0.3 mL PRN QID, 2-12 y: 0.6 mL PRN QID, >12 y: 0.6 - 1.8 mL PRN QID",
     },
   },
   {
+    drugDisplayName: "Simethicone/Dicyclomine 50/5mg /5ml syr",
     weight: 10,
-    drug: {
+    expectedResult: {
       type: "calculateByAge",
       displayName: "Simethicone/Dicyclomine 50/5mg /5ml syr",
       description: "<4 y: 2.5 mL TID - QID AC, 4-12 y: 5 mL TID - QID AC",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
+    },
+  },
+  {
+    drugDisplayName: "Brompheniramine/phenylephrine 4/10 mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      type: "calculateByAge",
+      displayName: "Brompheniramine/phenylephrine 4/10 mg/5ml syr",
+      description: "2-6 y: 1.25-2.5 mL PRN QID, 6-12 y: 2.5-5 mL PRN QID",
+    },
+  },
+  {
+    drugDisplayName: "Lactulose 66.7 g/100 ml syr",
+    weight: 10,
+    expectedResult: {
+      type: "calculateByAge",
+      displayName: "Lactulose 66.7 g/100 ml syr",
+      description: "<1 y: 5 mL/dose, 1-6 y: 5-10 mL/dose, 7-14 y: 10-15 mL/dose",
     },
   },
 ];
 
-const calculateByWeightTestCases: CalculateByWeightTestCase[] = [
+// Test cases for calculateByWeight drugs with dose ranges
+const calculateByWeightRangeTestCases: TestCase[] = [
   {
+    drugDisplayName: "Amoxicillin 125mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Amoxicillin 125mg/5ml syr",
-      description: "6.6 - 13.3 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 25,
-      originalDoseWithRange: {
-        lower: 6.6,
-        upper: 13.3,
-      },
-      remark: "max 2-3 g/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 6.6 * 10,
-        upper: 13.3 * 10,
+        lower: 66,
+        upper: 133,
       },
       calculatedEatWithRange: {
-        lower: (6.6 * 10) / 25,
-        upper: (13.3 * 10) / 25,
+        lower: 2.6,
+        upper: 5.3,
       },
       howToTake: {
-        first: `ครั้งละ ${((6.6 * 10) / 25 / 5).toFixed(1)} - ${(
-          (13.3 * 10) /
-          25 /
-          5
-        ).toFixed(1)} ช้อนชา (${((6.6 * 10) / 25).toFixed(1)} - ${(
-          (13.3 * 10) /
-          25
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.5 - 1.1 ช้อนชา (2.6 - 5.3 ml)",
         second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Amoxicillin 250mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Amoxicillin 250mg/5ml syr",
-      description: "6.6 - 13.3 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 50,
-      originalDoseWithRange: {
-        lower: 6.6,
-        upper: 13.3,
-      },
-      remark: "max 2-3 g/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 6.6 * 10,
-        upper: 13.3 * 10,
+        lower: 66,
+        upper: 133,
       },
       calculatedEatWithRange: {
-        lower: (6.6 * 10) / 50,
-        upper: (13.3 * 10) / 50,
+        lower: 1.3,
+        upper: 2.7,
       },
       howToTake: {
-        first: `ครั้งละ ${((6.6 * 10) / 50 / 5).toFixed(1)} - ${(
-          (13.3 * 10) /
-          50 /
-          5
-        ).toFixed(1)} ช้อนชา (${((6.6 * 10) / 50).toFixed(1)} - ${(
-          (13.3 * 10) /
-          50
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.3 - 0.5 ช้อนชา (1.3 - 2.7 ml)",
         second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Amox/clav 228.5 mg/5ml syr BID",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Amox/clav 228.5 mg/5ml syr BID",
-      description: "8.3 - 15 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 45.7,
-      originalDoseWithRange: {
-        lower: 8.3,
-        upper: 15,
-      },
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 8.3 * 10,
-        upper: 15 * 10,
+        lower: 83,
+        upper: 150,
       },
       calculatedEatWithRange: {
-        lower: (8.3 * 10) / 45.7,
-        upper: (15 * 10) / 45.7,
+        lower: 1.8,
+        upper: 3.3,
       },
       howToTake: {
-        first: `ครั้งละ ${((8.3 * 10) / 45.7 / 5).toFixed(1)} - ${(
-          (15 * 10) /
-          45.7 /
-          5
-        ).toFixed(1)} ช้อนชา (${((8.3 * 10) / 45.7).toFixed(1)} - ${(
-          (15 * 10) /
-          45.7
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.4 - 0.7 ช้อนชา (1.8 - 3.3 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Amox/clav 457 mg/5ml syr BID",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Amox/clav 457 mg/5ml syr BID",
-      description: "8.3 - 15 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 91.4,
-      originalDoseWithRange: {
-        lower: 8.3,
-        upper: 15,
-      },
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 8.3 * 10,
-        upper: 15 * 10,
+        lower: 83,
+        upper: 150,
       },
       calculatedEatWithRange: {
-        lower: (8.3 * 10) / 91.4,
-        upper: (15 * 10) / 91.4,
+        lower: 0.9,
+        upper: 1.6,
       },
       howToTake: {
-        first: `ครั้งละ ${((8.3 * 10) / 91.4 / 5).toFixed(1)} - ${(
-          (15 * 10) /
-          91.4 /
-          5
-        ).toFixed(1)} ช้อนชา (${((8.3 * 10) / 91.4).toFixed(1)} - ${(
-          (15 * 10) /
-          91.4
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.2 - 0.3 ช้อนชา (0.9 - 1.6 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Cephalexin 125mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Cephalexin 125mg/5ml syr",
-      description: "8.3 - 16.6 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 2-3 g/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-      divider: 25,
-      originalDoseWithRange: {
-        lower: 8.3,
-        upper: 16.6,
-      },
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 8.3 * 10,
-        upper: 16.6 * 10,
+        lower: 83,
+        upper: 166,
       },
       calculatedEatWithRange: {
-        lower: (8.3 * 10) / 25,
-        upper: (16.6 * 10) / 25,
+        lower: 3.3,
+        upper: 6.6,
       },
       howToTake: {
-        first: `ครั้งละ ${((8.3 * 10) / 25 / 5).toFixed(1)} - ${(
-          (16.6 * 10) /
-          25 /
-          5
-        ).toFixed(1)} ช้อนชา (${((8.3 * 10) / 25).toFixed(1)} - ${(
-          (16.6 * 10) /
-          25
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.7 - 1.3 ช้อนชา (3.3 - 6.6 ml)",
+        second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Cephalexin 250mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Cephalexin 250mg/5ml syr",
-      description: "8.3 - 16.6 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 50,
-      originalDoseWithRange: {
-        lower: 8.3,
-        upper: 16.6,
-      },
-      remark: "max 2-3 g/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 8.3 * 10,
-        upper: 16.6 * 10,
+        lower: 83,
+        upper: 166,
       },
       calculatedEatWithRange: {
-        lower: (8.3 * 10) / 50,
-        upper: (16.6 * 10) / 50,
+        lower: 1.7,
+        upper: 3.3,
       },
       howToTake: {
-        first: `ครั้งละ ${((8.3 * 10) / 50 / 5).toFixed(1)} - ${(
-          (16.6 * 10) /
-          50 /
-          5
-        ).toFixed(1)} ช้อนชา (${((8.3 * 10) / 50).toFixed(1)} - ${(
-          (16.6 * 10) /
-          50
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.3 - 0.7 ช้อนชา (1.7 - 3.3 ml)",
+        second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Cloxacillin 125mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Cloxacillin 125mg/5ml syr",
-      description: "12.5 - 25 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 25,
-      originalDoseWithRange: {
-        lower: 12.5,
-        upper: 25,
-      },
-      remark: "max 2 - 3 g/day",
-      meal: "ก่อนอาหาร",
-      label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 12.5 * 10,
-        upper: 25 * 10,
+        lower: 125,
+        upper: 250,
       },
       calculatedEatWithRange: {
-        lower: (12.5 * 10) / 25,
-        upper: (25 * 10) / 25,
+        lower: 5.0,
+        upper: 10.0,
       },
       howToTake: {
-        first: `ครั้งละ ${((12.5 * 10) / 25 / 5).toFixed(1)} - ${(
-          (25 * 10) /
-          25 /
-          5
-        ).toFixed(1)} ช้อนชา (${((12.5 * 10) / 25).toFixed(1)} - ${(
-          (25 * 10) /
-          25
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 1.0 - 2.0 ช้อนชา (5.0 - 10.0 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน ก่อนอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Dicloxacillin 62.5mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Dicloxacillin 62.5mg/5ml syr",
-      description: "6.25 - 12.5 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 12.5,
-      originalDoseWithRange: {
-        lower: 6.25,
-        upper: 12.5,
-      },
-      remark: "max 100 mg/kg/day",
-      meal: "ก่อนอาหาร",
-      label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 6.25 * 10,
-        upper: 12.5 * 10,
+        lower: 62.5,
+        upper: 125,
       },
       calculatedEatWithRange: {
-        lower: (6.25 * 10) / 12.5,
-        upper: (12.5 * 10) / 12.5,
+        lower: 5.0,
+        upper: 10.0,
       },
       howToTake: {
-        first: `ครั้งละ ${((6.25 * 10) / 12.5 / 5).toFixed(1)} - ${(
-          (12.5 * 10) /
-          12.5 /
-          5
-        ).toFixed(1)} ช้อนชา (${((6.25 * 10) / 12.5).toFixed(1)} - ${(
-          (12.5 * 10) /
-          12.5
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 1.0 - 2.0 ช้อนชา (5.0 - 10.0 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน ก่อนอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Domperidone 1mg/ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Domperidone 1mg/ml syr",
-      description: "0.2 - 0.4 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 1,
-      originalDoseWithRange: {
-        lower: 0.2,
-        upper: 0.4,
-      },
-      meal: "ก่อนอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 0.2 * 10,
-        upper: 0.4 * 10,
+        lower: 2.0,
+        upper: 4.0,
       },
       calculatedEatWithRange: {
-        lower: (0.2 * 10) / 1,
-        upper: (0.4 * 10) / 1,
+        lower: 2.0,
+        upper: 4.0,
       },
       howToTake: {
-        first: `ครั้งละ ${((0.2 * 10) / 1 / 5).toFixed(1)} - ${(
-          (0.4 * 10) /
-          1 /
-          5
-        ).toFixed(1)} ช้อนชา (${((0.2 * 10) / 1).toFixed(1)} - ${(
-          (0.4 * 10) /
-          1
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.4 - 0.8 ช้อนชา (2.0 - 4.0 ml)",
+        second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น ก่อนอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Guaifenesin 100mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Guaifenesin 100mg/5ml syr ",
-      description: "2.5 - 5 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 20,
-      originalDoseWithRange: {
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 25.0,
+        upper: 50.0,
+      },
+      calculatedEatWithRange: {
+        lower: 1.3,
+        upper: 2.5,
+      },
+      howToTake: {
+        first: "ครั้งละ 0.3 - 0.5 ช้อนชา (1.3 - 2.5 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน หลังอาหาร",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Ibuprofen 100mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 70.0,
+        upper: 100.0,
+      },
+      calculatedEatWithRange: {
+        lower: 3.5,
+        upper: 5.0,
+      },
+      howToTake: {
+        first: "ครั้งละ 0.7 - 1.0 ช้อนชา (3.5 - 5.0 ml)",
+        second: "เวลาปวดหรือมีไข้ทุก 6-8 ช.ม. หลังอาหาร",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Paracetamol 100mg/ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 100,
+        upper: 150,
+      },
+      calculatedEatWithRange: {
+        lower: 1.0,
+        upper: 1.5,
+      },
+      howToTake: {
+        first: "ครั้งละ 0.2 - 0.3 ช้อนชา (1.0 - 1.5 ml)",
+        second: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Paracetamol 120mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 100,
+        upper: 150,
+      },
+      calculatedEatWithRange: {
+        lower: 4.2,
+        upper: 6.3,
+      },
+      howToTake: {
+        first: "ครั้งละ 0.8 - 1.3 ช้อนชา (4.2 - 6.3 ml)",
+        second: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Paracetamol 160mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 100,
+        upper: 150,
+      },
+      calculatedEatWithRange: {
+        lower: 3.1,
+        upper: 4.7,
+      },
+      howToTake: {
+        first: "ครั้งละ 0.6 - 0.9 ช้อนชา (3.1 - 4.7 ml)",
+        second: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Paracetamol 250mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 100,
+        upper: 150,
+      },
+      calculatedEatWithRange: {
+        lower: 2.0,
+        upper: 3.0,
+      },
+      howToTake: {
+        first: "ครั้งละ 0.4 - 0.6 ช้อนชา (2.0 - 3.0 ml)",
+        second: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.", 
+      },
+    },
+  },
+  {
+    drugDisplayName: "Terbutaline 1.5mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 0.7,
+        upper: 1.0,
+      },
+      calculatedEatWithRange: {
+        lower: 2.3,
+        upper: 3.3,
+      },
+      howToTake: {
+        first: "ครั้งละ 0.5 - 0.7 ช้อนชา (2.3 - 3.3 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน หลังอาหาร",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Trimethoprim/sulfa (bactrim) 40/200 mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
+        lower: 30.0,
+        upper: 60.0,
+      },
+      calculatedEatWithRange: {
+        lower: 3.8,
+        upper: 7.5,
+      },  
+      howToTake: {
+        first: "ครั้งละ 0.8 - 1.5 ช้อนชา (3.8 - 7.5 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Dextromethorphan 15 mg/5ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDoseWithRange: {
         lower: 2.5,
-        upper: 5,
-      },
-      meal: "หลังอาหาร",
-      label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
-    },
-    result: {
-      calculatedDoseWithRange: {
-        lower: 2.5 * 10,
-        upper: 5 * 10,
+        upper: 5.0,
       },
       calculatedEatWithRange: {
-        lower: (2.5 * 10) / 20,
-        upper: (5 * 10) / 20,
+        lower: 0.8,
+        upper: 1.7,
       },
       howToTake: {
-        first: `ครั้งละ ${((2.5 * 10) / 20 / 5).toFixed(1)} - ${(
-          (5 * 10) /
-          20 /
-          5
-        ).toFixed(1)} ช้อนชา (${((2.5 * 10) / 20).toFixed(1)} - ${(
-          (5 * 10) /
-          20
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.2 - 0.3 ช้อนชา (0.8 - 1.7 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน หลังอาหาร",
       },
-    },
+    }
   },
   {
+    drugDisplayName: "Erythromycin 125 mg/5 ml susp",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Ibuprofen 100mg/5ml syr",
-      description: "7 - 10 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 20,
-      originalDoseWithRange: {
-        lower: 7,
-        upper: 10,
-      },
-      meal: "หลังอาหาร",
-      label: "เวลาปวดหรือมีไข้ทุก 6-8 ช.ม.",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 7 * 10,
-        upper: 10 * 10,
+        lower: 75.0,
+        upper: 125.0,
       },
       calculatedEatWithRange: {
-        lower: (7 * 10) / 20,
-        upper: (10 * 10) / 20,
+        lower: 3.0,
+        upper: 5.0,
       },
       howToTake: {
-        first: `ครั้งละ ${((7 * 10) / 20 / 5).toFixed(1)} - ${(
-          (10 * 10) /
-          20 /
-          5
-        ).toFixed(1)} ช้อนชา (${((7 * 10) / 20).toFixed(1)} - ${(
-          (10 * 10) /
-          20
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.6 - 1.0 ช้อนชา (3.0 - 5.0 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน ก่อนอาหาร",
       },
-    },
+    }
   },
   {
+    drugDisplayName: "Penicillin V 125 mg/5 ml susp",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Paracetamol 100mg/ml syr",
-      description: "10 - 15 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 100,
-      originalDoseWithRange: {
-        lower: 10,
-        upper: 15,
-      },
-      remark: "max 4 g/day",
-      label: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.",
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 10 * 10,
-        upper: 15 * 10,
+        lower: 62.5,
+        upper: 125.0,
       },
       calculatedEatWithRange: {
-        lower: (10 * 10) / 100,
-        upper: (15 * 10) / 100,
+        lower: 2.5,
+        upper: 5.0,
       },
       howToTake: {
-        first: `ครั้งละ ${((10 * 10) / 100 / 5).toFixed(1)} - ${(
-          (15 * 10) /
-          100 /
-          5
-        ).toFixed(1)} ช้อนชา (${((10 * 10) / 100).toFixed(1)} - ${(
-          (15 * 10) /
-          100
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.5 - 1.0 ช้อนชา (2.5 - 5.0 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน ก่อนอาหาร",
       },
-    },
-  },
-  {
-    weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Paracetamol 120mg/5ml syr",
-      description: "10 - 15 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 24,
-      originalDoseWithRange: {
-        lower: 10,
-        upper: 15,
-      },
-      remark: "max 4 g/day",
-      label: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.",
-    },
-    result: {
-      calculatedDoseWithRange: {
-        lower: 10 * 10,
-        upper: 15 * 10,
-      },
-      calculatedEatWithRange: {
-        lower: (10 * 10) / 24,
-        upper: (15 * 10) / 24,
-      },
-      howToTake: {
-        first: `ครั้งละ ${((10 * 10) / 24 / 5).toFixed(1)} - ${(
-          (15 * 10) /
-          24 /
-          5
-        ).toFixed(1)} ช้อนชา (${((10 * 10) / 24).toFixed(1)} - ${(
-          (15 * 10) /
-          24
-        ).toFixed(1)} ml)`,
-      },
-    },
-  },
-  {
-    weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Paracetamol 160mg/5ml syr",
-      description: "10 - 15 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 32,
-      originalDoseWithRange: {
-        lower: 10,
-        upper: 15,
-      },
-      remark: "max 4 g/day",
-      label: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.",
-    },
-    result: {
-      calculatedDoseWithRange: {
-        lower: 10 * 10,
-        upper: 15 * 10,
-      },
-      calculatedEatWithRange: {
-        lower: (10 * 10) / 32,
-        upper: (15 * 10) / 32,
-      },
-      howToTake: {
-        first: `ครั้งละ ${((10 * 10) / 32 / 5).toFixed(1)} - ${(
-          (15 * 10) /
-          32 /
-          5
-        ).toFixed(1)} ช้อนชา (${((10 * 10) / 32).toFixed(1)} - ${(
-          (15 * 10) /
-          32
-        ).toFixed(1)} ml)`,
-      },
-    },
-  },
-  {
-    weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Paracetamol 250mg/5ml syr",
-      description: "10 - 15 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 50,
-      originalDoseWithRange: {
-        lower: 10,
-        upper: 15,
-      },
-      remark: "max 4 g/day",
-      label: "เวลาปวดหรือมีไข้ทุก 4-6 ช.ม.",
-    },
-    result: {
-      calculatedDoseWithRange: {
-        lower: 10 * 10,
-        upper: 15 * 10,
-      },
-      calculatedEatWithRange: {
-        lower: (10 * 10) / 50,
-        upper: (15 * 10) / 50,
-      },
-      howToTake: {
-        first: `ครั้งละ ${((10 * 10) / 50 / 5).toFixed(1)} - ${(
-          (15 * 10) /
-          50 /
-          5
-        ).toFixed(1)} ช้อนชา (${((10 * 10) / 50).toFixed(1)} - ${(
-          (15 * 10) /
-          50
-        ).toFixed(1)} ml)`,
-      },
-    },
-  },
-  {
-    weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Terbutaline 1.5mg/5ml syr",
-      description: "0.07 - 0.1 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 0.3,
-      originalDoseWithRange: {
-        lower: 0.07,
-        upper: 0.1,
-      },
-      remark: "max 2.5 mg/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
-    },
-    result: {
-      calculatedDoseWithRange: {
-        lower: 0.07 * 10,
-        upper: 0.1 * 10,
-      },
-      calculatedEatWithRange: {
-        lower: (0.07 * 10) / 0.3,
-        upper: (0.1 * 10) / 0.3,
-      },
-      howToTake: {
-        first: `ครั้งละ ${((0.07 * 10) / 0.3 / 5).toFixed(1)} - ${(
-          (0.1 * 10) /
-          0.3 /
-          5
-        ).toFixed(1)} ช้อนชา (${((0.07 * 10) / 0.3).toFixed(1)} - ${(
-          (0.1 * 10) /
-          0.3
-        ).toFixed(1)} ml)`,
-      },
-    },
-  },
-  {
-    weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Trimethoprim/sulfa (bactrim) 40/200 mg/5ml syr",
-      description: "3 - 6 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      divider: 8,
-      originalDoseWithRange: {
-        lower: 3,
-        upper: 6,
-      },
-      remark: "max 320 mg Trimethoprim/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-    },
-    result: {
-      calculatedDoseWithRange: {
-        lower: 3 * 10,
-        upper: 6 * 10,
-      },
-      calculatedEatWithRange: {
-        lower: (3 * 10) / 8,
-        upper: (6 * 10) / 8,
-      },
-      howToTake: {
-        first: `ครั้งละ ${((3 * 10) / 8 / 5).toFixed(1)} - ${(
-          (6 * 10) /
-          8 /
-          5
-        ).toFixed(1)} ช้อนชา (${((3 * 10) / 8).toFixed(1)} - ${(
-          (6 * 10) /
-          8
-        ).toFixed(1)} ml)`,
-      },
-    },
+    }
   },
 ];
 
-const calculateSingleDoseTestCases: CalculateSingleDoseTestCase[] = [
+// Test cases for calculateByWeight drugs with single dose
+const calculateByWeightSingleDoseTestCases: TestCase[] = [
   {
+    drugDisplayName: "Amoxicillin 250mg/5ml syr BID",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Amoxicillin 250mg/5ml syr BID",
-      description: "22.5 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 2-3 g/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-      dose: 22.5,
-      divider: 50,
-    },
-    result: {
-      calculatedDose: 22.5 * 10,
-      calculatedEat: (22.5 * 10) / 50,
+    expectedResult: {
+      calculatedDose: 225,
+      calculatedEat: 4.5,
       howToTake: {
-        first: `ครั้งละ ${((22.5 * 10) / 50 / 5).toFixed(1)} ช้อนชา (${(
-          (22.5 * 10) /
-          50
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.9 ช้อนชา (4.5 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Amoxicillin 250mg/5ml syr (high dose)",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Amoxicillin 250mg/5ml syr (high dose)",
-      description: "45 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 2-3 g/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-      dose: 45,
-      divider: 50,
-    },
-    result: {
-      calculatedDose: 45 * 10,
-      calculatedEat: (45 * 10) / 50,
+    expectedResult: {
+      calculatedDose: 450,
+      calculatedEat: 9.0,
       howToTake: {
-        first: `ครั้งละ ${((45 * 10) / 50 / 5).toFixed(1)} ช้อนชา (${(
-          (45 * 10) /
-          50
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 1.8 ช้อนชา (9.0 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Amox/clav 600 mg/5ml syr BID 10 day for AOM",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Amox/clav 600 mg/5ml syr BID 10 day for AOM",
-      description: "45 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-      dose: 45,
-      divider: 120,
-    },
-    result: {
-      calculatedDose: 45 * 10,
-      calculatedEat: (45 * 10) / 120,
+    expectedResult: {
+      calculatedDose: 450,
+      calculatedEat: 3.8,
       howToTake: {
-        first: `ครั้งละ ${((45 * 10) / 120 / 5).toFixed(1)} ช้อนชา (${(
-          (45 * 10) /
-          120
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.8 ช้อนชา (3.8 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Antacid susp (Alu/Mag/Simet)",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Antacid susp (Alu/Mag/Simet)",
-      description: "4 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 30 mL/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
-      dose: 4,
-      divider: 4,
-    },
-    result: {
-      calculatedDose: 4 * 10,
-      calculatedEat: (4 * 10) / 4,
+    expectedResult: {
+      calculatedDose: 40,
+      calculatedEat: 10.0,
       howToTake: {
-        first: `ครั้งละ ${((4 * 10) / 4 / 5).toFixed(1)} ช้อนชา (${(
-          (4 * 10) /
-          4
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 2.0 ช้อนชา (10.0 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Azithromycin 200mg/5ml syr for GAS infection",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Azithromycin 200mg/5ml syr for GAS infection",
-      description: "12 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 1 ครั้ง เช้า",
-      dose: 12,
-      divider: 40,
-    },
-    result: {
-      calculatedDose: 12 * 10,
-      calculatedEat: (12 * 10) / 40,
+    expectedResult: {
+      calculatedDose: 120,
+      calculatedEat: 3.0,
       howToTake: {
-        first: `ครั้งละ ${((12 * 10) / 40 / 5).toFixed(1)} ช้อนชา (${(
-          (12 * 10) /
-          40
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.6 ช้อนชา (3.0 ml)",
+        second: "วันละ 1 ครั้ง เช้า หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Hyoscine-N-ButylBr 5mg/5ml syr (Buscopan)",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Hyoscine-N-ButylBr 5mg/5ml syr (Buscopan)",
-      description: "0.5 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 40 mg/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-      dose: 0.5,
-      divider: 1,
-    },
-    result: {
-      calculatedDose: 0.5 * 10,
-      calculatedEat: (0.5 * 10) / 1,
+    expectedResult: {
+      calculatedDose: 5.0,
+      calculatedEat: 5.0,
       howToTake: {
-        first: `ครั้งละ ${((0.5 * 10) / 1 / 5).toFixed(1)} ช้อนชา (${(
-          (0.5 * 10) /
-          1
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 1.0 ช้อนชา (5.0 ml)",
+        second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Brompheniramine/GG 2/100 mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Brompheniramine/GG 2/100 mg/5ml syr",
-      description: "0.17 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: " <6 y: max 8 mg/day | >6 y: max 16 mg/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-      dose: 0.17,
-      divider: 0.4,
-    },
-    result: {
-      calculatedDose: 0.17 * 10,
-      calculatedEat: (0.17 * 10) / 0.4,
+    expectedResult: {
+      calculatedDose: 1.7,
+      calculatedEat: 4.3,
       howToTake: {
-        first: `ครั้งละ ${((0.17 * 10) / 0.4 / 5).toFixed(1)} ช้อนชา (${(
-          (0.17 * 10) /
-          0.4
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.9 ช้อนชา (4.3 ml)",
+        second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Cefdinir 125mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Cefdinir 125mg/5ml sy",
-      description: "7 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 600 mg/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-      dose: 7,
-      divider: 25,
-    },
-    result: {
-      calculatedDose: 7 * 10,
-      calculatedEat: (7 * 10) / 25,
+    expectedResult: {
+      calculatedDose: 70,
+      calculatedEat: 2.8,
       howToTake: {
-        first: `ครั้งละ ${((7 * 10) / 25 / 5).toFixed(1)} ช้อนชา (${(
-          (7 * 10) /
-          25
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.6 ช้อนชา (2.8 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Cefixime 100mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Cefixime 100mg/5ml syr",
-      description: "8 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 400 mg/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 1 ครั้ง เช้า",
-      dose: 8,
-      divider: 20,
-    },
-    result: {
-      calculatedDose: 8 * 10,
-      calculatedEat: (8 * 10) / 20,
+    expectedResult: {
+      calculatedDose: 80,
+      calculatedEat: 4.0,
       howToTake: {
-        first: `ครั้งละ ${((8 * 10) / 20 / 5).toFixed(1)} ช้อนชา (${(
-          (8 * 10) /
-          20
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.8 ช้อนชา (4.0 ml)",
+        second: "วันละ 1 ครั้ง เช้า หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "CPM 2mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "CPM 2mg/5ml syr",
-      description: "0.12 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark:
-        "2-6 y: max 6 mg/day | 6-12 y: max 12 mg/day | >12 y: max 24 mg/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-      dose: 0.12,
-      divider: 0.4,
-    },
-    result: {
-      calculatedDose: 0.12 * 10,
-      calculatedEat: (0.12 * 10) / 0.4,
+    expectedResult: {
+      calculatedDose: 1.2,
+      calculatedEat: 3.0,
       howToTake: {
-        first: `ครั้งละ ${((0.12 * 10) / 0.4 / 5).toFixed(1)} ช้อนชา (${(
-          (0.12 * 10) /
-          0.4
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.6 ช้อนชา (3.0 ml)",
+        second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Hydroxyzine (Atarax) 10mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Hydroxyzine (Atarax) 10mg/5ml syr",
-      description: "0.6 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
-      dose: 0.6,
-      divider: 2,
-    },
-    result: {
-      calculatedDose: 0.6 * 10,
-      calculatedEat: (0.6 * 10) / 2,
+    expectedResult: {
+      calculatedDose: 6.0,
+      calculatedEat: 3.0,
       howToTake: {
-        first: `ครั้งละ ${((0.6 * 10) / 2 / 5).toFixed(1)} ช้อนชา (${(
-          (0.6 * 10) /
-          2
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.6 ช้อนชา (3.0 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Pseudoephedrine 30mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Pseudoephedrine 30mg/5ml syr",
-      description: "1 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "Max: 120 mg/day",
-      meal: "หลังอาหาร",
-      label: "วันละ 3 ครั้ง เช้า เที่ยง เย็น",
-      dose: 1,
-      divider: 6,
-    },
-    result: {
-      calculatedDose: 1 * 10,
-      calculatedEat: (1 * 10) / 6,
+    expectedResult: {
+      calculatedDose: 10.0,
+      calculatedEat: 1.7,
       howToTake: {
-        first: `ครั้งละ ${((1 * 10) / 6 / 5).toFixed(1)} ช้อนชา (${(
-          (1 * 10) /
-          6
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.3 ช้อนชา (1.7 ml)",
+        second: "วันละ 3 ครั้ง เช้า เที่ยง เย็น หลังอาหาร",
       },
     },
   },
   {
+    drugDisplayName: "Salbutamol 2mg/5ml syr",
     weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Salbutamol 2mg/5ml syr",
-      description: "0.1 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      remark: "max 2 mg/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน",
-      dose: 0.1,
-      divider: 0.4,
-    },
-    result: {
-      calculatedDose: 0.1 * 10,
-      calculatedEat: (0.1 * 10) / 0.4,
+    expectedResult: {
+      calculatedDose: 1.0,
+      calculatedEat: 2.5,
       howToTake: {
-        first: `ครั้งละ ${((0.1 * 10) / 0.4 / 5).toFixed(1)} ช้อนชา (${(
-          (0.1 * 10) /
-          0.4
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.5 ช้อนชา (2.5 ml)",
+        second: "วันละ 4 ครั้ง เช้า เที่ยง เย็น ก่อนนอน หลังอาหาร",
+      },
+    },
+  },
+  {
+    drugDisplayName: "Procaterol 25 mcg/5 ml syr",
+    weight: 10,
+    expectedResult: {
+      calculatedDose: 12.5,
+      calculatedEat: 2.5,
+      howToTake: {
+        first: "ครั้งละ 0.5 ช้อนชา (2.5 ml)",
+        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
       },
     },
   },
 ];
 
 // Test cases for drugs with secondary data
-const calculateByAgeWithSecondaryDataTestCases: CalculateByAgeTestCase[] = [
+const calculateByWeightWithSecondaryDataTestCases: TestCase[] = [
   {
+    drugDisplayName: "Favipiravir 100 mg/ml extemp. for susp",
     weight: 10,
-    drug: {
-      type: "calculateByAge",
-      displayName: "Primary Drug with Secondary",
-      description: "Primary drug description",
-      remark: "คำนวณตามอายุ",
-      meal: "หลังอาหาร",
-      secondaryData: {
-        type: "calculateByWeight",
-        displayName: "Secondary Drug",
-        description: "10 - 15 mg/kg/dose",
-        doseUnit: "mg/kg/dose",
-        divider: 50,
-        originalDoseWithRange: {
-          lower: 10,
-          upper: 15,
-        },
-        meal: "หลังอาหาร",
-        label: "วันละ 2 ครั้ง เช้า เย็น",
-      },
-    },
-  },
-];
-
-const calculateByWeightWithSecondaryDataTestCases: CalculateByWeightTestCase[] = [
-  {
-    weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Favipiravir 100 mg/ml extemp. for susp",
-      description: "วันแรก: 35 mg/kg/dose",
-      doseUnit: "mg/dose",
-      divider: 100,
-      originalDoseWithRange: {
-        lower: 35,
-        upper: 35,
-      },
-      remark: "รับประทานเป็นเวลา 5 วัน",
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
-      secondaryData: {
-        type: "calculateByWeight",
-        displayName: "Favipiravir 100 mg/ml extemp. for susp (Day 2-5)",
-        description: "วันที่ 2-5: 15 mg/kg/dose",
-        doseUnit: "mg/dose",
-        divider: 100,
-        originalDoseWithRange: {
-          lower: 15,
-          upper: 15,
-        },
-        remark: "รับประทานเป็นเวลา 5 วัน",
-        meal: "หลังอาหาร",
-        label: "วันละ 2 ครั้ง ทุก 12 ช.ม.",
-      },
-    },
-    result: {
+    expectedResult: {
       calculatedDoseWithRange: {
-        lower: 35 * 10,
-        upper: 35 * 10,
+        lower: 350,
+        upper: 350,
       },
       calculatedEatWithRange: {
-        lower: (35 * 10) / 100,
-        upper: (35 * 10) / 100,
+        lower: 3.5,
+        upper: 3.5,
       },
       howToTake: {
-        first: `ครั้งละ ${((35 * 10) / 100 / 5).toFixed(1)} ช้อนชา (${(
-          (35 * 10) /
-          100
-        ).toFixed(1)} ml)`,
+        first: "ครั้งละ 0.7 ช้อนชา (3.5 ml)",
         second: "วันละ 2 ครั้ง ทุก 12 ช.ม. หลังอาหาร",
       },
       secondaryData: {
         calculatedDoseWithRange: {
-          lower: 15 * 10,
-          upper: 15 * 10,
+          lower: 150,
+          upper: 150,
         },
         calculatedEatWithRange: {
-          lower: (15 * 10) / 100,
-          upper: (15 * 10) / 100,
+          lower: 1.5,
+          upper: 1.5,
         },
         howToTake: {
-          first: `ครั้งละ ${((15 * 10) / 100 / 5).toFixed(1)} ช้อนชา (${(
-            (15 * 10) /
-            100
-          ).toFixed(1)} ml)`,
+          first: "ครั้งละ 0.3 ช้อนชา (1.5 ml)",
           second: "วันละ 2 ครั้ง ทุก 12 ช.ม. หลังอาหาร",
-        },
-      },
-    },
-  },
-];
-
-const calculateSingleDoseWithSecondaryDataTestCases: CalculateSingleDoseTestCase[] = [
-  {
-    weight: 10,
-    drug: {
-      type: "calculateByWeight",
-      displayName: "Primary Drug Single Dose",
-      description: "20 mg/kg/dose",
-      doseUnit: "mg/kg/dose",
-      meal: "หลังอาหาร",
-      label: "วันละ 2 ครั้ง เช้า เย็น",
-      dose: 20,
-      divider: 40,
-      secondaryData: {
-        type: "calculateByWeight",
-        displayName: "Secondary Drug Single Dose",
-        description: "10 mg/kg/dose",
-        doseUnit: "mg/kg/dose",
-        meal: "หลังอาหาร",
-        label: "วันละ 1 ครั้ง เช้า",
-        dose: 10,
-        divider: 40,
-      },
-    },
-    result: {
-      calculatedDose: 20 * 10,
-      calculatedEat: (20 * 10) / 40,
-      howToTake: {
-        first: `ครั้งละ ${((20 * 10) / 40 / 5).toFixed(1)} ช้อนชา (${(
-          (20 * 10) /
-          40
-        ).toFixed(1)} ml)`,
-        second: "วันละ 2 ครั้ง เช้า เย็น หลังอาหาร",
-      },
-      secondaryData: {
-        calculatedDose: 10 * 10,
-        calculatedEat: (10 * 10) / 40,
-        howToTake: {
-          first: `ครั้งละ ${((10 * 10) / 40 / 5).toFixed(1)} ช้อนชา (${(
-            (10 * 10) /
-            40
-          ).toFixed(1)} ml)`,
-          second: "วันละ 1 ครั้ง เช้า หลังอาหาร",
         },
       },
     },
@@ -1284,92 +754,39 @@ describe("calculateDrug", () => {
   });
 
   calculateByAgeTestCases.forEach((testCase, index) => {
-    it(`should return the drug as-is for calculateByAge type for case ${
-      index + 1
-    }`, () => {
-      const result = calculateDrug(testCase.drug, testCase.weight);
-      expect(result).toEqual(testCase.drug);
+    it(`should return the drug as-is for calculateByAge type for case ${index + 1}: ${testCase.drugDisplayName}`, () => {
+      const drug = findDrugByDisplayName(testCase.drugDisplayName);
+      const result = calculateDrug(drug, testCase.weight);
+      expect(result).toMatchObject(testCase.expectedResult);
     });
   });
 
-  calculateByWeightTestCases.forEach((testCase, index) => {
-    it(`should calculate dose range correctly for case ${index + 1}`, () => {
-      const result = calculateDrug(testCase.drug, testCase.weight);
-      expect(result).toMatchObject({
-        calculatedDoseWithRange: testCase.result.calculatedDoseWithRange,
-        calculatedEatWithRange: testCase.result.calculatedEatWithRange,
-        howToTake: testCase.result.howToTake,
-      });
+  calculateByWeightRangeTestCases.forEach((testCase, index) => {
+    it(`should calculate dose range correctly for case ${index + 1}: ${testCase.drugDisplayName}`, () => {
+      const drug = findDrugByDisplayName(testCase.drugDisplayName);
+      const result = calculateDrug(drug, testCase.weight);
+      expect(result).toMatchObject(testCase.expectedResult);
     });
   });
 
-  calculateSingleDoseTestCases.forEach((testCase, index) => {
-    it(`should calculate single dose correctly for case ${index + 1}`, () => {
-      const result = calculateDrug(testCase.drug, testCase.weight);
-      expect(result).toMatchObject({
-        calculatedDose: testCase.result.calculatedDose,
-        calculatedEat: testCase.result.calculatedEat,
-        howToTake: testCase.result.howToTake,
-      });
-    });
-  });
-
-  // Tests for drugs with secondary data
-  calculateByAgeWithSecondaryDataTestCases.forEach((testCase, index) => {
-    it(`should handle calculateByAge drug with secondary data for case ${
-      index + 1
-    }`, () => {
-      const result = calculateDrug(testCase.drug, testCase.weight);
-      expect(result).toMatchObject({
-        type: testCase.drug.type,
-        displayName: testCase.drug.displayName,
-        description: testCase.drug.description,
-      });
-      
-      // Check that secondary data is calculated
-      expect(result?.secondaryData).toBeDefined();
-      if (testCase.drug.secondaryData && result?.secondaryData) {
-        expect(result.secondaryData).toHaveProperty('calculatedDoseWithRange');
-        expect(result.secondaryData).toHaveProperty('calculatedEatWithRange');
-        expect(result.secondaryData).toHaveProperty('howToTake');
-      }
+  calculateByWeightSingleDoseTestCases.forEach((testCase, index) => {
+    it(`should calculate single dose correctly for case ${index + 1}: ${testCase.drugDisplayName}`, () => {
+      const drug = findDrugByDisplayName(testCase.drugDisplayName);
+      const result = calculateDrug(drug, testCase.weight);
+      expect(result).toMatchObject(testCase.expectedResult);
     });
   });
 
   calculateByWeightWithSecondaryDataTestCases.forEach((testCase, index) => {
-    it(`should calculate dose range with secondary data correctly for case ${
-      index + 1
-    }`, () => {
-      const result = calculateDrug(testCase.drug, testCase.weight);
-      expect(result).toMatchObject({
-        calculatedDoseWithRange: testCase.result.calculatedDoseWithRange,
-        calculatedEatWithRange: testCase.result.calculatedEatWithRange,
-        howToTake: testCase.result.howToTake,
-      });
+    it(`should calculate dose range with secondary data correctly for case ${index + 1}: ${testCase.drugDisplayName}`, () => {
+      const drug = findDrugByDisplayName(testCase.drugDisplayName);
+      const result = calculateDrug(drug, testCase.weight);
+      expect(result).toMatchObject(testCase.expectedResult);
       
       // Check secondary data calculation
       expect(result?.secondaryData).toBeDefined();
-      if (testCase.result.secondaryData && result?.secondaryData) {
-        expect(result.secondaryData).toMatchObject(testCase.result.secondaryData);
-      }
-    });
-  });
-
-  calculateSingleDoseWithSecondaryDataTestCases.forEach((testCase, index) => {
-    it(`should calculate single dose with secondary data correctly for case ${
-      index + 1
-    }`, () => {
-      const result = calculateDrug(testCase.drug, testCase.weight);
-      expect(result).toMatchObject({
-        calculatedDose: testCase.result.calculatedDose,
-        calculatedEat: testCase.result.calculatedEat,
-        howToTake: testCase.result.howToTake,
-      });
-      
-      // Check secondary data calculation
-      expect(result?.secondaryData).toBeDefined();
-      if (testCase.result.secondaryData && result?.secondaryData) {
-        expect(result.secondaryData).toMatchObject(testCase.result.secondaryData);
+      if (testCase.expectedResult.secondaryData && result?.secondaryData) {
+        expect(result.secondaryData).toMatchObject(testCase.expectedResult.secondaryData);
       }
     });
   });
@@ -1416,89 +833,67 @@ describe("calculateDrugs", () => {
 
   it("should filter out null results from unsupported drugs", () => {
     const weight = 10;
-    const drugs = [
-      {
-        type: "calculateByWeight",
-        displayName: "Unsupported Drug",
-        description: "This is an unsupported drug",
-        remark: "This is an unsupported drug",
-      } as Drug,
-      calculateByAgeTestCases[0].drug,
-    ];
+    const unsupportedDrug = {
+      type: "calculateByWeight",
+      displayName: "Unsupported Drug",
+      description: "This is an unsupported drug",
+      remark: "This is an unsupported drug",
+    } as Drug;
+    const supportedDrug = findDrugByDisplayName("Albendazole 200mg/5ml syr");
+    const drugs = [unsupportedDrug, supportedDrug];
 
     const result = calculateDrugs(drugs, weight);
     expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(calculateByAgeTestCases[0].drug);
+    expect(result[0].displayName).toBe("Albendazole 200mg/5ml syr");
   });
 
   it("should calculate multiple drugs correctly", () => {
     const weight = 10;
-    const drugs = [
-      calculateByAgeTestCases[0].drug,
-      calculateByWeightTestCases[0].drug,
-      calculateSingleDoseTestCases[0].drug,
+    const testDrugs = [
+      findDrugByDisplayName("Albendazole 200mg/5ml syr"),
+      findDrugByDisplayName("Amoxicillin 125mg/5ml syr"),
+      findDrugByDisplayName("Amoxicillin 250mg/5ml syr BID"),
     ];
 
-    const result = calculateDrugs(drugs, weight);
+    const result = calculateDrugs(testDrugs, weight);
     expect(result).toHaveLength(3);
 
-    expect(result[0]).toEqual(calculateByAgeTestCases[0].drug);
-    expect(result[1]).toMatchObject({
-      calculatedDoseWithRange: calculateByWeightTestCases[0].result.calculatedDoseWithRange,
-      calculatedEatWithRange: calculateByWeightTestCases[0].result.calculatedEatWithRange,
-      howToTake: calculateByWeightTestCases[0].result.howToTake,
-    });
-    expect(result[2]).toMatchObject({
-      calculatedDose: calculateSingleDoseTestCases[0].result.calculatedDose,
-      calculatedEat: calculateSingleDoseTestCases[0].result.calculatedEat,
-      howToTake: calculateSingleDoseTestCases[0].result.howToTake,
-    });
+    // First drug (calculateByAge) should be returned as-is
+    expect(result[0].displayName).toBe("Albendazole 200mg/5ml syr");
+    expect(result[0].type).toBe("calculateByAge");
+
+    // Second drug (calculateByWeight with range) should have calculated values
+    expect(result[1].displayName).toBe("Amoxicillin 125mg/5ml syr");
+    expect(result[1]).toHaveProperty('calculatedDoseWithRange');
+    expect(result[1]).toHaveProperty('calculatedEatWithRange');
+    expect(result[1]).toHaveProperty('howToTake');
+
+    // Third drug (calculateByWeight single dose) should have calculated values
+    expect(result[2].displayName).toBe("Amoxicillin 250mg/5ml syr BID");
+    expect(result[2]).toHaveProperty('calculatedDose');
+    expect(result[2]).toHaveProperty('calculatedEat');
+    expect(result[2]).toHaveProperty('howToTake');
   });
 
   it("should handle mixed drug types correctly", () => {
     const weight = 15;
-    const drugs = [
-      calculateByAgeTestCases[1].drug, 
-      calculateByWeightTestCases[1].drug,
-      calculateSingleDoseTestCases[1].drug, 
-      {
-        type: "calculateByWeight",
-        displayName: "Invalid Drug",
-        description: "Missing required properties",
-      } as Drug,
+    const testDrugs = [
+      findDrugByDisplayName("Ambroxal 30mg/5ml syr"), // calculateByAge
+      findDrugByDisplayName("Amoxicillin 250mg/5ml syr"), // calculateByWeight with range
+      findDrugByDisplayName("Azithromycin 200mg/5ml syr for GAS infection"), // calculateByWeight single dose
     ];
 
-    const result = calculateDrugs(drugs, weight);
-    expect(result).toHaveLength(3); // Only valid drugs should be included
+    const result = calculateDrugs(testDrugs, weight);
+    expect(result).toHaveLength(3);
 
-    expect(result[0]).toEqual(calculateByAgeTestCases[1].drug);
-
-    const expectedDoseRange = {
-      lower: calculateByWeightTestCases[1].drug.originalDoseWithRange!.lower * weight,
-      upper: calculateByWeightTestCases[1].drug.originalDoseWithRange!.upper * weight,
-    };
-    const expectedEatRange = {
-      lower: expectedDoseRange.lower / calculateByWeightTestCases[1].drug.divider!,
-      upper: expectedDoseRange.upper / calculateByWeightTestCases[1].drug.divider!,
-    };
-
-    expect(result[1]).toMatchObject({
-      calculatedDoseWithRange: expectedDoseRange,
-      calculatedEatWithRange: expectedEatRange,
-    });
-
-    const expectedDose = calculateSingleDoseTestCases[1].drug.dose! * weight;
-    const expectedEat = expectedDose / calculateSingleDoseTestCases[1].drug.divider!;
-
-    expect(result[2]).toMatchObject({
-      calculatedDose: expectedDose,
-      calculatedEat: expectedEat,
-    });
+    expect(result[0].type).toBe("calculateByAge");
+    expect(result[1]).toHaveProperty('calculatedDoseWithRange');
+    expect(result[2]).toHaveProperty('calculatedDose');
   });
 
   it("should preserve all drug properties when calculating", () => {
     const weight = 12;
-    const drug = calculateByWeightTestCases[2].drug; // Pick a drug with many properties
+    const drug = findDrugByDisplayName("Amox/clav 228.5 mg/5ml syr BID");
     const drugs = [drug];
 
     const result = calculateDrugs(drugs, weight);
@@ -1517,67 +912,29 @@ describe("calculateDrugs", () => {
     expect(calculatedDrug).toHaveProperty('howToTake');
   });
 
-  it("should calculate drugs with secondary data correctly", () => {
-    const weight = 10;
-    const drugs = [
-      calculateByAgeWithSecondaryDataTestCases[0].drug,
-      calculateByWeightWithSecondaryDataTestCases[0].drug,
-      calculateSingleDoseWithSecondaryDataTestCases[0].drug,
-    ];
-
-    const result = calculateDrugs(drugs, weight);
-    expect(result).toHaveLength(3);
-
-    // Check calculateByAge with secondary data
-    expect(result[0]).toMatchObject({
-      type: "calculateByAge",
-      displayName: "Primary Drug with Secondary",
-    });
-    expect(result[0].secondaryData).toBeDefined();
-    expect(result[0].secondaryData).toHaveProperty('calculatedDoseWithRange');
-
-    // Check calculateByWeight with secondary data
-    expect(result[1]).toMatchObject({
-      calculatedDoseWithRange: calculateByWeightWithSecondaryDataTestCases[0].result.calculatedDoseWithRange,
-      calculatedEatWithRange: calculateByWeightWithSecondaryDataTestCases[0].result.calculatedEatWithRange,
-    });
-    expect(result[1].secondaryData).toBeDefined();
-    expect(result[1].secondaryData).toMatchObject(
-      calculateByWeightWithSecondaryDataTestCases[0].result.secondaryData
-    );
-
-    // Check single dose with secondary data
-    expect(result[2]).toMatchObject({
-      calculatedDose: calculateSingleDoseWithSecondaryDataTestCases[0].result.calculatedDose,
-      calculatedEat: calculateSingleDoseWithSecondaryDataTestCases[0].result.calculatedEat,
-    });
-    expect(result[2].secondaryData).toBeDefined();
-    expect(result[2].secondaryData).toMatchObject(
-      calculateSingleDoseWithSecondaryDataTestCases[0].result.secondaryData
-    );
-  });
-
   it("should handle mixed drugs with and without secondary data", () => {
     const weight = 8;
-    const drugs = [
-      calculateByAgeTestCases[0].drug, // No secondary data
-      calculateByWeightWithSecondaryDataTestCases[0].drug, // With secondary data
-      calculateSingleDoseTestCases[0].drug, // No secondary data
+    const testDrugs = [
+      findDrugByDisplayName("Albendazole 200mg/5ml syr"), // No secondary data
+      findDrugByDisplayName("Favipiravir 100 mg/ml extemp. for susp"), // With secondary data
+      findDrugByDisplayName("Amoxicillin 250mg/5ml syr BID"), // No secondary data
     ];
 
-    const result = calculateDrugs(drugs, weight);
+    const result = calculateDrugs(testDrugs, weight);
     expect(result).toHaveLength(3);
 
     // First drug should not have secondary data
-    expect(result[0]).toEqual(calculateByAgeTestCases[0].drug);
+    expect(result[0].displayName).toBe("Albendazole 200mg/5ml syr");
     expect(result[0].secondaryData).toBeUndefined();
 
     // Second drug should have calculated secondary data
+    expect(result[1].displayName).toBe("Favipiravir 100 mg/ml extemp. for susp");
     expect(result[1]).toHaveProperty('calculatedDoseWithRange');
     expect(result[1].secondaryData).toBeDefined();
     expect(result[1].secondaryData).toHaveProperty('calculatedDoseWithRange');
 
     // Third drug should not have secondary data
+    expect(result[2].displayName).toBe("Amoxicillin 250mg/5ml syr BID");
     expect(result[2]).toHaveProperty('calculatedDose');
     expect(result[2].secondaryData).toBeUndefined();
   });

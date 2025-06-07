@@ -7,9 +7,14 @@ function calculateDoseWithRange(
   weight: number
 ) {
   return {
-    lower: originalDoseWithRange.lower * weight,
-    upper: originalDoseWithRange.upper * weight,
+    lower: roundToDecimal(originalDoseWithRange.lower * weight),
+    upper: roundToDecimal(originalDoseWithRange.upper * weight),
   };
+}
+
+// Custom rounding function that uses standard rounding rules (>= 0.5 rounds up, < 0.5 rounds down)
+function roundToDecimal(value: number): number {
+  return Math.round(value * 10) / 10;
 }
 
 function calculateEatWithRange(
@@ -17,8 +22,8 @@ function calculateEatWithRange(
   divider: number
 ) {
   return {
-    lower: calculatedDoseWithRange.lower / divider,
-    upper: calculatedDoseWithRange.upper / divider,
+    lower: roundToDecimal(calculatedDoseWithRange.lower / divider),
+    upper: roundToDecimal(calculatedDoseWithRange.upper / divider),
   };
 }
 
@@ -40,15 +45,17 @@ function formatHowToTake(
     ? lowerMl 
     : `${lowerMl} - ${upperMl}`;
   
+  const second = meal ? `${label} ${meal}` : label;
+  
   return {
     first: `ครั้งละ ${teaspoonDisplay} ช้อนชา (${mlDisplay} ml)`,
-    second: `${label} ${meal}`,
+    second,
   };
 }
 
 function calculateSingleDose(dose: number, weight: number, divider: number) {
   const calculatedDose = dose * weight;
-  return calculatedDose / divider;
+  return roundToDecimal(calculatedDose / divider);
 }
 
 function formatSingleDoseHowToTake(
@@ -56,11 +63,13 @@ function formatSingleDoseHowToTake(
   label: string,
   meal: string
 ) {
+  const second = meal ? `${label} ${meal}` : label;
+  
   return {
     first: `ครั้งละ ${(calculatedEat / 5).toFixed(
       1
     )} ช้อนชา (${calculatedEat.toFixed(1)} ml)`,
-    second: `${label} ${meal}`,
+    second,
   };
 }
 
@@ -110,7 +119,7 @@ export function calculateDrug(
 
     calculatedDrug = {
       ...drug,
-      calculatedDose: drug.dose * weight,
+      calculatedDose: roundToDecimal(drug.dose * weight),
       calculatedEat,
       howToTake,
     };
