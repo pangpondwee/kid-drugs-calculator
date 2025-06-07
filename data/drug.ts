@@ -527,11 +527,8 @@ export const drugs: Drug[] = [
     displayName: "Procaterol 25 mcg/5 ml syr",
     description: "1.25 mcg/kg/dose",
     doseUnit: "mcg/dose",
-    divider: 25,
-    originalDoseWithRange: {
-      lower: 1.25,
-      upper: 1.25,
-    },
+    divider: 5,
+    dose: 1.25,
     meal: "หลังอาหาร",
     label: "วันละ 2 ครั้ง เช้า เย็น",
   }
