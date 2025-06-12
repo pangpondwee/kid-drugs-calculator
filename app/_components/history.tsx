@@ -107,13 +107,13 @@ export function History() {
                   drug.meal
                 ) : (
                   <div className="flex flex-col gap-1">
-                    <span>{drug.howToTake?.first}</span>
+                    <span>{drug.secondaryData ? "วันแรก: " : ""}{drug.howToTake?.first}</span>
                     {!drug.secondaryData && (
                       <span>{drug.howToTake?.second}</span>
                     )}
                     {drug.secondaryData?.type === "calculateByWeight" && drug.secondaryData.howToTake && (
                       <>
-                        <span>{drug.secondaryData.howToTake.first}</span>
+                        <span>วันที่ 2-5: {drug.secondaryData.howToTake.first}</span>
                         <span>{drug.secondaryData.howToTake.second}</span>
                       </>
                     )}
