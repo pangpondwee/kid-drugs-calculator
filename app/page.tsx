@@ -11,8 +11,10 @@ export default function Page() {
         <Form />
         <History />
       </main>
-      <footer className="px-4 py-1 text-xs flex justify-center text-slate-600">
-        Version 1.1.0 (07/06/2025)
+      <footer className="px-4 py-1 text-xs flex flex-col items-center justify-center text-slate-600">
+        <p>Version 1.1.0 (07/06/2025)</p>
+        <p>Developed by Nattapol Leesakulpisut</p>
+        <p>Department of Pharmacy, Songkhla Hospital</p>
       </footer>
     </div>
   );
