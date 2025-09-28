@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
   content: [
@@ -59,11 +60,7 @@ const config: Config = {
         xs: "393px",
       },
       fontFamily: {
-        sans: [
-          "var(--font-sarabun)",
-          "system-ui",
-          "sans-serif",
-        ],
+        sans: ["var(--font-inter)", "var(--font-sarabun)", ...defaultTheme.fontFamily.sans],
       },
     },
   },

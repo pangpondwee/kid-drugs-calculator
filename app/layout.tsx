@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Sarabun } from "next/font/google";
+import { Inter,Sarabun } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { Analytics } from "@vercel/analytics/next"
 
@@ -10,10 +10,15 @@ export const metadata: Metadata = {
 };
 
 const sarabun = Sarabun({
-  subsets: ["latin", "thai"],
+  subsets: [ "thai"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-sarabun",
-  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
 });
 
 export default function RootLayout({
@@ -23,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" suppressHydrationWarning>
-      <body className={`${sarabun.variable} font-sans antialiased `}>
+      <body className={`${inter.variable} ${sarabun.variable} font-sans antialiased `}>
         <Providers>{children}</Providers>
         <Analytics />
       </body>
