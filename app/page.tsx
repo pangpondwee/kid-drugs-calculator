@@ -13,7 +13,8 @@ export default function Page() {
       </main>
       <footer className="px-4 py-1 text-xs flex flex-col items-center justify-center text-slate-600">
         <p>Version 1.1.0 (07/06/2025)</p>
-        <p>Developed by Chanatkarn Leesakulpisut</p>
+        <p>Developed by Nattapol Leesakulpisut</p>
+        <p>and Chanatkarn Leesakulpisut</p>
       </footer>
     </div>
   );
