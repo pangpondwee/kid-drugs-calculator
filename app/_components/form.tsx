@@ -13,6 +13,7 @@ import { SearchInput } from "./search-input";
 import { DrugList } from "./drug-list";
 import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
+import { usePostHog } from "posthog-js/react";
 import { drugsAtom, drugsHistoryAtom } from "@/store/atoms";
 import { useState } from "react";
 import { calculateDrugs } from "../_lib/calculator";
@@ -80,6 +81,7 @@ export default function Form() {
 
   const [drugsHistory, setDrugsHistory] = useAtom(drugsHistoryAtom);
   const [drugs, setDrugs] = useAtom(drugsAtom);
+  const posthog = usePostHog();
 
   function resetForm() {
     setWeight(null);
@@ -91,6 +93,7 @@ export default function Form() {
 
     const calculatedDrugs = calculateDrugs(drugs, weight);
     if (calculatedDrugs.length > 0) {
+      posthog.capture("calculate_click", { drug_count: calculatedDrugs.length });
       setDrugsHistory([...drugsHistory, ...calculatedDrugs]);
       resetForm();
     }
